@@ -77,6 +77,19 @@ export function OnDeviceChat(): ReactElement {
     void chat.send(prompt);
   };
 
+  if (!gateChecked) {
+    return (
+      <div className="odc-shell wa-cluster wa-gap-s wa-align-items-center">
+        <WaSpinner />
+        <span className="odc-meta">Loading…</span>
+      </div>
+    );
+  }
+
+  if (!gateCleared) {
+    return <EntryGate modelId={chat.modelId} onContinue={clearGate} />;
+  }
+
   return (
     <div className="odc-shell wa-stack wa-gap-2xl">
       <header className="wa-stack wa-gap-s">
