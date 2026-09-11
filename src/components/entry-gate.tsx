@@ -97,7 +97,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
   return (
     <div className="odc-shell wa-stack wa-gap-2xl">
       <header className="wa-stack wa-gap-s">
-        <h1>Before you start</h1>
+        <h1>On-device AI pre-flight check</h1>
         <p className="odc-lede">
           This page runs a real language model inside your browser. Here is what that means, and
           whether your device is up to it.
