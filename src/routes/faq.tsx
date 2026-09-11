@@ -48,7 +48,7 @@ const groups: readonly FaqGroup[] = [
       {
         question: "Why is the first use such a big download?",
         answer: [
-          "A language model is a large file of numbers. The smallest one here is about 380 MB, and the largest about 1.1 GB.",
+          "A language model is a large file of numbers. The smallest one here is about 270 MB, and the largest about 2.3 GB.",
           "It only downloads once. Your browser keeps it, so the next visit starts almost immediately.",
         ],
       },
@@ -77,6 +77,25 @@ const groups: readonly FaqGroup[] = [
         answer: [
           "A recent Chrome, Edge or Safari on a machine with graphics acceleration gives the fastest replies. Firefox support for the graphics path is still arriving.",
           "A desktop or a recent tablet handles the larger models comfortably. Older machines fall back to processor-only mode automatically.",
+        ],
+      },
+    ],
+  },
+  {
+    heading: "Installing it as an app",
+    icon: "mobile-screen",
+    entries: [
+      {
+        question: "Can I install this on my home screen?",
+        answer: [
+          "Yes. On Android and desktop Chrome or Edge an \u201cInstall this as an app\u201d button appears under the chat. On an iPhone or iPad, use Safari's Share button and choose Add to Home Screen.",
+        ],
+      },
+      {
+        question: "What does installing change?",
+        answer: [
+          "It gets its own icon and opens without browser tabs. The page itself is cached, so it opens even without a connection, and a model you have already downloaded still works offline.",
+          "It is the same site, not a store app. Nothing extra is installed on your device and nothing is sent anywhere.",
         ],
       },
     ],
@@ -115,7 +134,13 @@ const groups: readonly FaqGroup[] = [
         question: "Why is it so much slower?",
         answer: [
           "The processor does the same arithmetic without the parallel hardware built for it, so expect a few words per second rather than a flowing reply.",
-          "Processor mode uses a single small model of about 380 MB, chosen so the wait stays bearable.",
+          "Processor mode offers two very small models. It defaults to the lighter one, about 270 MB, so the download and the start-up wait stay short; a slightly larger 380 MB option gives somewhat better answers.",
+        ],
+      },
+      {
+        question: "Does it start downloading before I press the button?",
+        answer: [
+          "In processor mode, yes: once the device check passes, the download starts quietly in the background so the model is ready sooner. It is skipped on a mobile-data connection, when you are offline, and when the model is already saved here.",
         ],
       },
       {
