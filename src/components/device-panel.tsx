@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { ReactElement } from "react";
 
 import { WaBadge, WaCard, WaIcon } from "@/design-system/font-awsome-web-awesome-171158";
@@ -8,6 +9,8 @@ export interface DevicePanelProps {
   readonly device: DeviceReport | null;
   readonly appleSilicon: boolean;
   readonly stats: GenerationStats | null;
+  /** Show the link to the explainer page. Hidden on the explainer page itself. */
+  readonly showExplainerLink?: boolean;
 }
 
 function formatRate(value: number | null): string {
