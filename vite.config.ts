@@ -25,6 +25,9 @@ export default defineConfig({
         injectRegister: null,
         registerType: "autoUpdate",
         filename: "sw.js",
+        // The Nitro build emits the browser bundle into dist/client; the worker
+        // and its precache manifest must be written there to be served at /sw.js.
+        outDir: "dist/client",
         devOptions: { enabled: false },
         includeAssets: ["favicon.svg", "apple-touch-icon.png", "robots.txt"],
         manifest: {
