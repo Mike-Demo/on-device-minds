@@ -196,6 +196,9 @@ export function OnDeviceChat(): ReactElement {
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="comments" />
             <h2 className="odc-card-heading">{model.label}</h2>
+            <WaBadge variant={cpuOnly ? "warning" : "success"} appearance="outlined" pill>
+              {cpuOnly ? "Processor only (slower)" : "Graphics accelerated"}
+            </WaBadge>
           </div>
 
           <div className="odc-log">
