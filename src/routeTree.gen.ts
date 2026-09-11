@@ -15,6 +15,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LicensesRouteImport } from './routes/licenses'
 import { Route as NeuralEngineRouteImport } from './routes/neural-engine'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ModelsCompareRouteImport } from './routes/models.compare'
 import { Route as ModelsLlama3InBrowserRouteImport } from './routes/models.llama-3-in-browser'
 
 const IndexRoute = IndexRouteImport.update({
@@ -47,6 +48,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModelsCompareRoute = ModelsCompareRouteImport.update({
+  id: '/models/compare',
+  path: '/models/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ModelsLlama3InBrowserRoute = ModelsLlama3InBrowserRouteImport.update({
   id: '/models/llama-3-in-browser',
   path: '/models/llama-3-in-browser',
@@ -60,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesByTo {
@@ -69,6 +76,7 @@ export interface FileRoutesByTo {
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesById {
@@ -79,6 +87,7 @@ export interface FileRoutesById {
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRouteTypes {
@@ -90,6 +99,7 @@ export interface FileRouteTypes {
     | '/licenses'
     | '/neural-engine'
     | '/sitemap.xml'
+    | '/models/compare'
     | '/models/llama-3-in-browser'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -99,6 +109,7 @@ export interface FileRouteTypes {
     | '/licenses'
     | '/neural-engine'
     | '/sitemap.xml'
+    | '/models/compare'
     | '/models/llama-3-in-browser'
   id:
     | '__root__'
@@ -108,6 +119,7 @@ export interface FileRouteTypes {
     | '/licenses'
     | '/neural-engine'
     | '/sitemap.xml'
+    | '/models/compare'
     | '/models/llama-3-in-browser'
   fileRoutesById: FileRoutesById
 }
@@ -118,6 +130,7 @@ export interface RootRouteChildren {
   LicensesRoute: typeof LicensesRoute
   NeuralEngineRoute: typeof NeuralEngineRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ModelsCompareRoute: typeof ModelsCompareRoute
   ModelsLlama3InBrowserRoute: typeof ModelsLlama3InBrowserRoute
 }
 
@@ -165,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/models/compare': {
+      id: '/models/compare'
+      path: '/models/compare'
+      fullPath: '/models/compare'
+      preLoaderRoute: typeof ModelsCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/models/llama-3-in-browser': {
       id: '/models/llama-3-in-browser'
       path: '/models/llama-3-in-browser'
@@ -182,6 +202,7 @@ const rootRouteChildren: RootRouteChildren = {
   LicensesRoute: LicensesRoute,
   NeuralEngineRoute: NeuralEngineRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ModelsCompareRoute: ModelsCompareRoute,
   ModelsLlama3InBrowserRoute: ModelsLlama3InBrowserRoute,
 }
 export const routeTree = rootRouteImport
