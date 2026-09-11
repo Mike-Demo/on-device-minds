@@ -79,7 +79,7 @@ function NeuralEnginePage(): ReactElement {
           <WaCard appearance="outlined" with-header>
             <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
               <WaIcon name="circle-question" />
-              <strong>Why the door is closed</strong>
+              <h2 className="odc-card-heading">Why the door is closed</h2>
             </div>
             <div className="wa-stack wa-gap-m">
               <p>
@@ -106,7 +106,7 @@ function NeuralEnginePage(): ReactElement {
           <WaCard appearance="outlined" with-header>
             <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
               <WaIcon name="mobile-screen" />
-              <strong>What a native app would change</strong>
+              <h2 className="odc-card-heading">What a native app would change</h2>
             </div>
             <div className="wa-stack wa-gap-m">
               <p>
@@ -127,7 +127,7 @@ function NeuralEnginePage(): ReactElement {
           <WaCard appearance="outlined" with-header>
             <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
               <WaIcon name="scale-balanced" />
-              <strong>Side by side</strong>
+              <h2 className="odc-card-heading">Side by side</h2>
             </div>
             <div className="wa-stack wa-gap-m">
               <Row label="What runs the model" browser="Graphics chip" native="Neural Engine" />
