@@ -11,5 +11,9 @@ export default defineConfig({
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    // Every page renders identically for every visitor (no cookies, session or per-user data),
+    // so build them once to static HTML. /sitemap.xml stays a server route.
+    pages: [{ path: "/" }, { path: "/neural-engine" }, { path: "/licenses" }],
+    prerender: { enabled: true, autoStaticPathsDiscovery: false },
   },
 });
