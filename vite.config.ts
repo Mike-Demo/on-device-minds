@@ -18,6 +18,8 @@ export default defineConfig({
       { path: "/" },
       { path: "/faq" },
       { path: "/models/llama-3-in-browser" },
+      { path: "/models/compare" },
+      { path: "/diagnostics" },
       { path: "/neural-engine" },
       { path: "/licenses" },
     ],

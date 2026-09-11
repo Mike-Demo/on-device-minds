@@ -10,15 +10,22 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LicensesRouteImport } from './routes/licenses'
 import { Route as NeuralEngineRouteImport } from './routes/neural-engine'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ModelsCompareRouteImport } from './routes/models.compare'
 import { Route as ModelsLlama3InBrowserRouteImport } from './routes/models.llama-3-in-browser'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiagnosticsRoute = DiagnosticsRouteImport.update({
+  id: '/diagnostics',
+  path: '/diagnostics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -41,6 +48,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModelsCompareRoute = ModelsCompareRouteImport.update({
+  id: '/models/compare',
+  path: '/models/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ModelsLlama3InBrowserRoute = ModelsLlama3InBrowserRouteImport.update({
   id: '/models/llama-3-in-browser',
   path: '/models/llama-3-in-browser',
@@ -49,62 +61,76 @@ const ModelsLlama3InBrowserRoute = ModelsLlama3InBrowserRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/faq': typeof FaqRoute
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/faq': typeof FaqRoute
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/diagnostics': typeof DiagnosticsRoute
   '/faq': typeof FaqRoute
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/diagnostics'
     | '/faq'
     | '/licenses'
     | '/neural-engine'
     | '/sitemap.xml'
+    | '/models/compare'
     | '/models/llama-3-in-browser'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/diagnostics'
     | '/faq'
     | '/licenses'
     | '/neural-engine'
     | '/sitemap.xml'
+    | '/models/compare'
     | '/models/llama-3-in-browser'
   id:
     | '__root__'
     | '/'
+    | '/diagnostics'
     | '/faq'
     | '/licenses'
     | '/neural-engine'
     | '/sitemap.xml'
+    | '/models/compare'
     | '/models/llama-3-in-browser'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DiagnosticsRoute: typeof DiagnosticsRoute
   FaqRoute: typeof FaqRoute
   LicensesRoute: typeof LicensesRoute
   NeuralEngineRoute: typeof NeuralEngineRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ModelsCompareRoute: typeof ModelsCompareRoute
   ModelsLlama3InBrowserRoute: typeof ModelsLlama3InBrowserRoute
 }
 
@@ -115,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diagnostics': {
+      id: '/diagnostics'
+      path: '/diagnostics'
+      fullPath: '/diagnostics'
+      preLoaderRoute: typeof DiagnosticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -145,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/models/compare': {
+      id: '/models/compare'
+      path: '/models/compare'
+      fullPath: '/models/compare'
+      preLoaderRoute: typeof ModelsCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/models/llama-3-in-browser': {
       id: '/models/llama-3-in-browser'
       path: '/models/llama-3-in-browser'
@@ -157,10 +197,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DiagnosticsRoute: DiagnosticsRoute,
   FaqRoute: FaqRoute,
   LicensesRoute: LicensesRoute,
   NeuralEngineRoute: NeuralEngineRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ModelsCompareRoute: ModelsCompareRoute,
   ModelsLlama3InBrowserRoute: ModelsLlama3InBrowserRoute,
 }
 export const routeTree = rootRouteImport

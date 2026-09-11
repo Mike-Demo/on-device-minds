@@ -375,6 +375,24 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           How this works on Apple hardware
         </Link>
       </div>
+
+      <WaCard appearance="outlined" with-header>
+        <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
+          <WaIcon name="magnifying-glass-chart" />
+          <h2 className="odc-card-heading">Full device report</h2>
+        </div>
+        <div className="wa-stack wa-gap-m">
+          <p className="odc-meta">
+            Want the detail behind these checks? The diagnostics page names your browser, operating
+            system and graphics chip, lists the features that decide the speed, and gives tips for
+            your exact device — including the hidden settings in Safari on iPhone and iPad, and the
+            hardware acceleration switch in Chrome and Edge.
+          </p>
+          <Link to="/diagnostics" className="odc-meta">
+            Open the device diagnostics
+          </Link>
+        </div>
+      </WaCard>
     </div>
   );
 }
