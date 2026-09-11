@@ -18,6 +18,7 @@ const description =
   "Browsers can only reach the graphics chip. Here's why the iPad Pro's Neural Engine stays out of reach on the web, and what a native app would change.";
 
 export const Route = createFileRoute("/neural-engine")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title },

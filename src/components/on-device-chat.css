@@ -76,3 +76,10 @@
 .odc-gate-list li {
   color: var(--wa-color-text-normal);
 }
+
+.odc-card-heading {
+  margin: 0;
+  font-size: var(--wa-font-size-m);
+  font-weight: var(--wa-font-weight-semibold);
+  line-height: var(--wa-line-height-condensed);
+}
