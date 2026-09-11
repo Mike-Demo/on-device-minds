@@ -124,25 +124,40 @@ export function OnDeviceChat(): ReactElement {
         <WaCard appearance="outlined" with-header>
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="download" />
-            <h2 className="odc-card-heading">Choose a model and load it</h2>
+            <h2 className="odc-card-heading">
+              {cpuOnly ? "Load the processor-only model" : "Choose a model and load it"}
+            </h2>
           </div>
 
           <div className="wa-stack wa-gap-l">
-            <WaSelect
-              ref={selectRef}
-              label="Model"
-              value={chat.modelId}
-              hint={`${model.blurb} About ${model.approxDownloadMb} MB to download once.`}
-              disabled={chat.status === "loading"}
-              with-label
-              with-hint
-            >
-              {ON_DEVICE_MODELS.map((entry) => (
-                <WaOption key={entry.id} value={entry.id}>
-                  {entry.label}
-                </WaOption>
-              ))}
-            </WaSelect>
+            {cpuOnly ? (
+              <WaCallout variant="warning" appearance="outlined">
+                <WaIcon slot="icon" name="microchip" />
+                <strong>Running on the processor</strong>
+                <p>
+                  This browser can&apos;t use the graphics chip, so a single small model runs on the
+                  processor instead. It works, but answers appear far more slowly — often a few words
+                  a second.
+                </p>
+              </WaCallout>
+            ) : (
+              <WaSelect
+                ref={selectRef}
+                label="Model"
+                value={chat.modelId}
+                hint={`${model.blurb} About ${model.approxDownloadMb} MB to download once.`}
+                disabled={chat.status === "loading"}
+                with-label
+                with-hint
+              >
+                {ON_DEVICE_MODELS.map((entry) => (
+                  <WaOption key={entry.id} value={entry.id}>
+                    {entry.label}
+                  </WaOption>
+                ))}
+              </WaSelect>
+            )}
+
 
             {chat.status === "loading" ? (
               <div className="wa-stack wa-gap-xs">
