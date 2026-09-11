@@ -31,7 +31,14 @@ export const ON_DEVICE_MODELS: readonly OnDeviceModel[] = [
     id: "Qwen2.5-1.5B-Instruct-q4f16_1-MLC",
     label: "Qwen2.5 1.5B Instruct",
     approxDownloadMb: 1090,
-    blurb: "Strongest of the three. Best on a desktop or a recent tablet.",
+    blurb: "A strong all-rounder. Best on a desktop or a recent tablet.",
+  },
+  {
+    id: "Phi-4-mini-instruct-q4f16_1-MLC",
+    label: "Phi-4 mini Instruct",
+    approxDownloadMb: 2300,
+    blurb:
+      "The most capable option. Needs a recent desktop or laptop with graphics acceleration and plenty of memory.",
   },
 ];
 
