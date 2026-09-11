@@ -55,7 +55,9 @@ export default defineConfig({
           runtimeCaching: [
             {
               // HTML navigations are always network-first so a deploy is picked up.
-              urlPattern: ({ request }) => request.mode === "navigate",
+              // OAuth callbacks must always hit the network, never a cache.
+              urlPattern: ({ request, url }) =>
+                request.mode === "navigate" && !url.pathname.startsWith("/~oauth"),
               handler: "NetworkFirst",
               options: {
                 cacheName: "pages",
