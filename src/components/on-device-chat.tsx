@@ -218,7 +218,7 @@ export function OnDeviceChat(): ReactElement {
                 type="submit"
                 variant="brand"
                 loading={chat.generating}
-                disabled={chat.generating || draft.trim().length === 0}
+                disabled={chat.generating}
               >
                 <WaIcon slot="start" name="paper-plane" />
                 Send
