@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@cloudflare/vite-plugin": "^1.54.6",
+    "@cloudflare/vite-plugin": "1.54.7",
     "@hookform/resolvers": "^5.2.2",
     "@mlc-ai/web-llm": "^0.2.85",
     "@radix-ui/react-accordion": "^1.2.12",
