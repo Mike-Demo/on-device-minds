@@ -56,6 +56,8 @@ function Row({ label, browser, native }: RowProps): ReactElement {
 }
 
 function NeuralEnginePage(): ReactElement {
+  useEffect(() => warmChatChunk(), []);
+
   return (
     <>
       <WebAwesomeLoader />
