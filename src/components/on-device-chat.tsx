@@ -14,7 +14,7 @@ import {
   WaTextarea,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
-import { CPU_MODEL, ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
+import { CPU_MODELS, ON_DEVICE_MODELS, findCpuModel, findModel } from "@/lib/webllm/models";
 
 import { BrandMark } from "./brand-mark";
 import { DevicePanel } from "./device-panel";
@@ -46,12 +46,27 @@ export function OnDeviceChat(): ReactElement {
     setGateCleared(true);
   };
   const selectRef = useRef<HTMLElement | null>(null);
+  const cpuSelectRef = useRef<HTMLElement | null>(null);
   const textareaRef = useRef<HTMLElement | null>(null);
   const cpuOnly = chat.runtime === "cpu";
   const gpuModel = findModel(chat.modelId);
-  const model = cpuOnly
-    ? { label: CPU_MODEL.label, blurb: CPU_MODEL.blurb, approxDownloadMb: CPU_MODEL.approxDownloadMb }
-    : gpuModel;
+  const cpuModel = findCpuModel(chat.cpuModelId);
+  const model = cpuOnly ? cpuModel : gpuModel;
+
+  useEffect(() => {
+    const element = cpuSelectRef.current;
+    if (!element) return;
+    const handler = (): void => {
+      const value = (element as HTMLElement & { value?: string }).value;
+      if (typeof value === "string" && value.length > 0) chat.selectCpuModel(value);
+    };
+    element.addEventListener("change", handler);
+    element.addEventListener("wa-change", handler);
+    return () => {
+      element.removeEventListener("change", handler);
+      element.removeEventListener("wa-change", handler);
+    };
+  }, [chat]);
 
   useEffect(() => {
     const element = selectRef.current;
@@ -132,15 +147,33 @@ export function OnDeviceChat(): ReactElement {
 
           <div className="wa-stack wa-gap-l">
             {cpuOnly ? (
-              <WaCallout variant="warning" appearance="outlined">
-                <WaIcon slot="icon" name="microchip" />
-                <strong>Running on the processor</strong>
-                <p>
-                  This browser can&apos;t use the graphics chip, so a single small model runs on the
-                  processor instead. It works, but answers appear far more slowly — often a few words
-                  a second.
-                </p>
-              </WaCallout>
+              <>
+                <WaCallout variant="warning" appearance="outlined">
+                  <WaIcon slot="icon" name="microchip" />
+                  <strong>Running on the processor</strong>
+                  <p>
+                    This browser can&apos;t use the graphics chip, so a small model runs on the
+                    processor instead. It works, but answers appear far more slowly — often a few
+                    words a second.
+                  </p>
+                </WaCallout>
+
+                <WaSelect
+                  ref={cpuSelectRef}
+                  label="Model"
+                  value={chat.cpuModelId}
+                  hint={`${cpuModel.blurb} About ${cpuModel.approxDownloadMb} MB to download once.`}
+                  disabled={chat.status === "loading"}
+                  with-label
+                  with-hint
+                >
+                  {CPU_MODELS.map((entry) => (
+                    <WaOption key={entry.id} value={entry.id}>
+                      {entry.label} — about {entry.approxDownloadMb} MB
+                    </WaOption>
+                  ))}
+                </WaSelect>
+              </>
             ) : (
               <WaSelect
                 ref={selectRef}
