@@ -4,7 +4,8 @@
  */
 
 .odc-shell {
-  max-inline-size: calc(var(--wa-space-5xl) * 12);
+  /* Same container measure the design system's own .wa-licenses page uses. */
+  max-inline-size: 48rem;
   margin-inline: auto;
   padding-inline: var(--wa-space-l);
   padding-block: var(--wa-space-2xl);
@@ -18,7 +19,8 @@
 
 .odc-lede {
   color: var(--wa-color-text-quiet);
-  max-inline-size: calc(var(--wa-space-5xl) * 8);
+  /* Same reading measure the design system's own .wa-licenses-lede uses. */
+  max-inline-size: 60ch;
 }
 
 .odc-log {
