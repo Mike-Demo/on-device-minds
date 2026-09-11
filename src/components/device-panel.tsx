@@ -17,7 +17,12 @@ function formatRate(value: number | null): string {
   return value === null ? "—" : `${value.toFixed(1)} tok/s`;
 }
 
-export function DevicePanel({ device, appleSilicon, stats }: DevicePanelProps): ReactElement {
+export function DevicePanel({
+  device,
+  appleSilicon,
+  stats,
+  showExplainerLink = true,
+}: DevicePanelProps): ReactElement {
   return (
     <WaCard appearance="outlined" with-header>
       <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
