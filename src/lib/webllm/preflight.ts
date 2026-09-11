@@ -5,7 +5,7 @@
  */
 
 import { inspectDevice, type DeviceReport } from "./device";
-import { findModel } from "./models";
+import { CPU_MODEL, findModel, type RuntimeKind } from "./models";
 
 export type CheckLevel = "pass" | "warn" | "fail" | "unknown";
 
