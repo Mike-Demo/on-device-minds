@@ -12,10 +12,12 @@ import {
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { BrandMark } from "@/components/brand-mark";
+import { breadcrumbJsonLd, pageUrl, publisherRef, websiteRef } from "@/lib/seo";
 
 import "@/components/on-device-chat.css";
 
-const SITE_URL = "https://ai.mikedemo.dev";
+const FAQ_URL = pageUrl("/faq");
+
 
 const title = "Questions and troubleshooting — On-device AI demo";
 const description =
@@ -245,6 +247,13 @@ const toolGroups: readonly ToolGroup[] = [
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
+  "@id": FAQ_URL,
+  name: title,
+  description,
+  url: FAQ_URL,
+  inLanguage: "en",
+  isPartOf: websiteRef,
+  publisher: publisherRef,
   mainEntity: groups.flatMap((group) =>
     group.entries.map((entry) => ({
       "@type": "Question",
@@ -254,14 +263,10 @@ const faqJsonLd = {
   ),
 };
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-    { "@type": "ListItem", position: 2, name: "Questions", item: `${SITE_URL}/faq` },
-  ],
-};
+const crumbsJsonLd = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: "Questions", path: "/faq" },
+]);
 
 export const Route = createFileRoute("/faq")({
   staticData: { sitemap: true },
@@ -271,16 +276,17 @@ export const Route = createFileRoute("/faq")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
-      { property: "og:url", content: "/faq" },
+      { property: "og:url", content: FAQ_URL },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/faq" }],
+    links: [{ rel: "canonical", href: FAQ_URL }],
     scripts: [
       { type: "application/ld+json", children: JSON.stringify(faqJsonLd) },
-      { type: "application/ld+json", children: JSON.stringify(breadcrumbJsonLd) },
+      { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },
     ],
   }),
+
   component: FaqPage,
 });
 

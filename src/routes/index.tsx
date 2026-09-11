@@ -4,6 +4,15 @@ import { Suspense, lazy, useEffect } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { InstallApp } from "@/components/install-app";
 import { warmChatChunk } from "@/lib/prefetch";
+import {
+  SITE_NAME,
+  WEBSITE_ID,
+  pageUrl,
+  publisherJsonLd,
+  publisherRef,
+  websiteRef,
+} from "@/lib/seo";
+
 
 import "@/components/on-device-chat.css";
 
@@ -21,24 +30,38 @@ const title = "On-device AI — a language model running in your browser";
 const description =
   "Run a small language model right inside your browser. No server, no API key — the chat happens entirely on your own device.";
 
-const SITE_URL = "https://ai.mikedemo.dev";
+const HOME_URL = pageUrl("/");
 
 const siteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "On-device AI",
-  url: SITE_URL,
+  "@id": WEBSITE_ID,
+  name: SITE_NAME,
+  url: HOME_URL,
   description,
+  inLanguage: "en",
+  publisher: publisherRef,
 };
 
 const appJsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   name: "On-device AI chat",
-  url: SITE_URL,
+  url: HOME_URL,
   applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any modern web browser",
+  browserRequirements: "Requires a current browser; WebGPU for graphics-accelerated models",
   description,
+  isAccessibleForFree: true,
+  featureList: [
+    "Runs a language model entirely in the browser",
+    "No server, account, or API key",
+    "Works offline once the model is cached",
+    "Processor-only fallback for devices without WebGPU",
+    "Installable as a home-screen app",
+  ],
+  creator: publisherRef,
+  isPartOf: websiteRef,
   offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
 };
 
@@ -50,16 +73,20 @@ export const Route = createFileRoute("/")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
+      { property: "og:url", content: HOME_URL },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
+    links: [{ rel: "canonical", href: HOME_URL }],
     scripts: [
+      { type: "application/ld+json", children: JSON.stringify(publisherJsonLd) },
       { type: "application/ld+json", children: JSON.stringify(siteJsonLd) },
       { type: "application/ld+json", children: JSON.stringify(appJsonLd) },
     ],
   }),
   component: Index,
 });
+
 
 function Loading() {
   return (
