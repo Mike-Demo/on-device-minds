@@ -1,5 +1,7 @@
 import { ClientOnly, createFileRoute } from "@tanstack/react-router";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
+
+import { warmChatChunk } from "@/lib/prefetch";
 
 import {
   SiteFooter,
@@ -40,6 +42,8 @@ function Loading() {
 }
 
 function Index() {
+  useEffect(() => warmChatChunk(), []);
+
   return (
     <>
       <WebAwesomeLoader />

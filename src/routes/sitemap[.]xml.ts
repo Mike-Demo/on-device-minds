@@ -19,7 +19,10 @@ export const Route = createFileRoute("/sitemap.xml")({
           );
         }
         return new Response(sitemapXML(BASE_URL, entries), {
-          headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=3600" },
+          headers: {
+            "Content-Type": "application/xml",
+            "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+          },
         });
       },
     },
