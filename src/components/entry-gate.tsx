@@ -53,6 +53,22 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
   const [verified, setVerified] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const [speedPhase, setSpeedPhase] = useState<SpeedPhase>("idle");
+  const [speedMbps, setSpeedMbps] = useState<number | null>(null);
+
+  const runSpeedTest = useCallback(() => {
+    setSpeedPhase("running");
+    void (async () => {
+      const result = await measureDownloadSpeed();
+      if (result === null) {
+        setSpeedMbps(null);
+        setSpeedPhase("failed");
+        return;
+      }
+      setSpeedMbps(result.mbps);
+      setSpeedPhase("done");
+    })();
+  }, []);
 
   useEffect(() => {
     let active = true;
