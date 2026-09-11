@@ -66,10 +66,10 @@ export function OnDeviceChat(): ReactElement {
   const onSubmit = (event: FormEvent): void => {
     event.preventDefault();
     const element = textareaRef.current as (HTMLElement & { value?: string }) | null;
-    const prompt = (element?.value ?? draft).trim();
+    const prompt = (element?.value ?? "").trim();
     if (prompt.length === 0) return;
-    setDraft("");
     if (element) element.value = "";
+
     void chat.send(prompt);
   };
 
