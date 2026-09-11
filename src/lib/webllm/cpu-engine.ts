@@ -11,15 +11,6 @@ import wllamaWasmUrl from "@wllama/wllama/esm/wasm/wllama.wasm?url";
 import type { ChatTurn, GenerationStats, LoadProgress } from "./engine";
 import { CPU_MODEL, CPU_MODEL_URL, SYSTEM_PROMPT } from "./models";
 
-/** True when this browser can run the WebAssembly path at all. */
-export function isCpuRuntimeSupported(): boolean {
-  return (
-    typeof WebAssembly !== "undefined" &&
-    typeof Worker !== "undefined" &&
-    typeof navigator !== "undefined"
-  );
-}
-
 export async function createCpuEngine(
   onProgress: (progress: LoadProgress) => void,
 ): Promise<Wllama> {

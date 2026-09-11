@@ -70,3 +70,15 @@ export function isAppleSilicon(): boolean {
   const touchMac = navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
   return /iPad|iPhone|Macintosh/.test(ua) || touchMac;
 }
+
+/**
+ * Whether the browser can run the processor-only (WebAssembly) path.
+ * This is the fallback when WebGPU is unavailable.
+ */
+export function isCpuRuntimeSupported(): boolean {
+  return (
+    typeof WebAssembly !== "undefined" &&
+    typeof Worker !== "undefined" &&
+    typeof navigator !== "undefined"
+  );
+}

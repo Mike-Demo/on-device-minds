@@ -4,7 +4,7 @@
  * importable on the server (where it simply reports "unknown").
  */
 
-import { inspectDevice, type DeviceReport } from "./device";
+import { inspectDevice, isCpuRuntimeSupported, type DeviceReport } from "./device";
 import { CPU_MODEL, findModel, type RuntimeKind } from "./models";
 
 export type CheckLevel = "pass" | "warn" | "fail" | "unknown";
@@ -214,7 +214,6 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
   const model = findModel(modelId);
   const device = await inspectDevice();
 
-  const { isCpuRuntimeSupported } = await import("./cpu-engine");
   const runtime: RuntimeKind = device.webgpu ? "gpu" : isCpuRuntimeSupported() ? "cpu" : "none";
   const downloadMb = runtime === "cpu" ? CPU_MODEL.approxDownloadMb : model.approxDownloadMb;
 
