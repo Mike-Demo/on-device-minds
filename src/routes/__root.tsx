@@ -10,6 +10,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import themeCss from "../design-system/font-awsome-web-awesome-171158/webawesome/theme.css?url";
+import { WEB_AWESOME_HTML_CLASSES } from "../design-system/font-awsome-web-awesome-171158/webawesome/setup";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
 function NotFoundComponent() {
