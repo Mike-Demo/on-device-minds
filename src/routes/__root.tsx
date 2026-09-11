@@ -99,6 +99,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // Warm the CDN connection before the stylesheet and icon SVG requests.
       { rel: "preconnect", href: "https://cdn.jsdelivr.net", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://cdn.jsdelivr.net" },
+      // The human check and the model download both go to other hosts; open
+      // those connections while the page is still rendering.
+      { rel: "preconnect", href: "https://newassets.hcaptcha.com", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://hcaptcha.com" },
+      { rel: "preconnect", href: "https://huggingface.co", crossOrigin: "anonymous" },
+      { rel: "dns-prefetch", href: "https://cdn-lfs-us-1.hf.co" },
       { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.12.0/dist/styles/webawesome.css" },
       {
         rel: "stylesheet",

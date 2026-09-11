@@ -14,7 +14,7 @@ export default defineConfig({
     server: { entry: "server" },
     // Every page renders identically for every visitor (no cookies, session or per-user data),
     // so build them once to static HTML. /sitemap.xml stays a server route.
-    pages: [{ path: "/" }, { path: "/neural-engine" }, { path: "/licenses" }],
+    pages: [{ path: "/" }, { path: "/faq" }, { path: "/neural-engine" }, { path: "/licenses" }],
     prerender: { enabled: true, autoStaticPathsDiscovery: false },
   },
   vite: {

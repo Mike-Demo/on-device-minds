@@ -16,7 +16,6 @@ import {
 import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
 import { CPU_MODELS, ON_DEVICE_MODELS, findCpuModel, findModel } from "@/lib/webllm/models";
 
-import { BrandMark } from "./brand-mark";
 import { DevicePanel } from "./device-panel";
 
 import { EntryGate, GATE_STORAGE_KEY } from "./entry-gate";
@@ -96,7 +95,7 @@ export function OnDeviceChat(): ReactElement {
 
   if (!gateChecked) {
     return (
-      <div className="odc-shell wa-cluster wa-gap-s wa-align-items-center">
+      <div className="odc-shell odc-shell-body wa-cluster wa-gap-s wa-align-items-center">
         <WaSpinner />
         <span className="odc-meta">Loading…</span>
       </div>
@@ -108,19 +107,7 @@ export function OnDeviceChat(): ReactElement {
   }
 
   return (
-    <div className="odc-shell wa-stack wa-gap-2xl">
-      <header className="wa-stack wa-gap-s">
-        <div className="wa-cluster wa-gap-s wa-align-items-center">
-          <BrandMark className="odc-brand-mark" />
-          <h1>An AI model running inside this page</h1>
-        </div>
-
-        <p className="odc-lede">
-          Nothing here talks to a server. The model downloads once into this browser and then answers
-          on your own hardware — offline, private, and free to run.
-        </p>
-      </header>
-
+    <div className="odc-shell odc-shell-body wa-stack wa-gap-2xl">
       {chat.status === "checking" ? (
         <div className="wa-cluster wa-gap-s wa-align-items-center">
           <WaSpinner />
