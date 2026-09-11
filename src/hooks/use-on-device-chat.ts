@@ -1,16 +1,27 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MLCEngineInterface } from "@mlc-ai/web-llm";
+import type { Wllama } from "@wllama/wllama";
 
-import { inspectDevice, isAppleSilicon, type DeviceReport } from "@/lib/webllm/device";
+import {
+  inspectDevice,
+  isAppleSilicon,
+  isCpuRuntimeSupported,
+  type DeviceReport,
+} from "@/lib/webllm/device";
 import type { ChatTurn, GenerationStats, LoadProgress } from "@/lib/webllm/engine";
-import { DEFAULT_MODEL_ID } from "@/lib/webllm/models";
+import { CPU_MODEL, DEFAULT_MODEL_ID, type RuntimeKind } from "@/lib/webllm/models";
 
 export type EngineStatus = "checking" | "unsupported" | "idle" | "loading" | "ready" | "error";
+
+type LoadedEngine =
+  | { readonly kind: "gpu"; readonly engine: MLCEngineInterface }
+  | { readonly kind: "cpu"; readonly engine: Wllama };
 
 export interface OnDeviceChatState {
   readonly status: EngineStatus;
   readonly device: DeviceReport | null;
   readonly appleSilicon: boolean;
+  readonly runtime: RuntimeKind;
   readonly modelId: string;
   readonly cached: boolean;
   readonly progress: LoadProgress | null;
@@ -28,11 +39,12 @@ export interface OnDeviceChatApi extends OnDeviceChatState {
 }
 
 export function useOnDeviceChat(): OnDeviceChatApi {
-  const engineRef = useRef<MLCEngineInterface | null>(null);
+  const engineRef = useRef<LoadedEngine | null>(null);
 
   const [status, setStatus] = useState<EngineStatus>("checking");
   const [device, setDevice] = useState<DeviceReport | null>(null);
   const [appleSilicon, setAppleSilicon] = useState(false);
+  const [runtime, setRuntime] = useState<RuntimeKind>("none");
   const [modelId, setModelId] = useState<string>(DEFAULT_MODEL_ID);
   const [cached, setCached] = useState(false);
   const [progress, setProgress] = useState<LoadProgress | null>(null);
@@ -46,9 +58,11 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     void (async () => {
       const report = await inspectDevice();
       if (!active) return;
+      const next: RuntimeKind = report.webgpu ? "gpu" : isCpuRuntimeSupported() ? "cpu" : "none";
       setDevice(report);
       setAppleSilicon(isAppleSilicon());
-      setStatus(report.webgpu ? "idle" : "unsupported");
+      setRuntime(next);
+      setStatus(next === "none" ? "unsupported" : "idle");
     })();
     return () => {
       active = false;
@@ -56,17 +70,27 @@ export function useOnDeviceChat(): OnDeviceChatApi {
   }, []);
 
   useEffect(() => {
-    if (!device?.webgpu) return;
+    if (runtime === "none") return;
     let active = true;
     void (async () => {
-      const { isModelCached } = await import("@/lib/webllm/engine");
-      const hit = await isModelCached(modelId);
-      if (active) setCached(hit);
+      try {
+        if (runtime === "gpu") {
+          const { isModelCached } = await import("@/lib/webllm/engine");
+          const hit = await isModelCached(modelId);
+          if (active) setCached(hit);
+        } else {
+          const { isCpuModelCached } = await import("@/lib/webllm/cpu-engine");
+          const hit = await isCpuModelCached();
+          if (active) setCached(hit);
+        }
+      } catch {
+        if (active) setCached(false);
+      }
     })();
     return () => {
       active = false;
     };
-  }, [device, modelId]);
+  }, [runtime, modelId]);
 
   const selectModel = useCallback((next: string) => {
     if (engineRef.current) return;
@@ -74,14 +98,19 @@ export function useOnDeviceChat(): OnDeviceChatApi {
   }, []);
 
   const loadModel = useCallback(async () => {
-    if (engineRef.current || status === "loading") return;
+    if (engineRef.current || status === "loading" || runtime === "none") return;
     setStatus("loading");
     setError(null);
     setProgress({ fraction: 0, text: "Starting download" });
 
     try {
-      const { createOnDeviceEngine } = await import("@/lib/webllm/engine");
-      engineRef.current = await createOnDeviceEngine(modelId, setProgress);
+      if (runtime === "gpu") {
+        const { createOnDeviceEngine } = await import("@/lib/webllm/engine");
+        engineRef.current = { kind: "gpu", engine: await createOnDeviceEngine(modelId, setProgress) };
+      } else {
+        const { createCpuEngine } = await import("@/lib/webllm/cpu-engine");
+        engineRef.current = { kind: "cpu", engine: await createCpuEngine(setProgress) };
+      }
       setStatus("ready");
       setCached(true);
     } catch (cause) {
@@ -89,13 +118,13 @@ export function useOnDeviceChat(): OnDeviceChatApi {
       setError(cause instanceof Error ? cause.message : "The model could not be loaded.");
       setStatus("error");
     }
-  }, [modelId, status]);
+  }, [modelId, runtime, status]);
 
   const send = useCallback(
     async (prompt: string) => {
-      const engine = engineRef.current;
+      const loaded = engineRef.current;
       const trimmed = prompt.trim();
-      if (!engine || generating || trimmed.length === 0) return;
+      if (!loaded || generating || trimmed.length === 0) return;
 
       const history: ChatTurn[] = [...turns, { role: "user", content: trimmed }];
       setTurns([...history, { role: "assistant", content: "" }]);
@@ -104,13 +133,19 @@ export function useOnDeviceChat(): OnDeviceChatApi {
       setError(null);
 
       try {
-        const { streamReply } = await import("@/lib/webllm/engine");
         let answer = "";
-        const result = await streamReply(engine, history, (delta) => {
+        const onDelta = (delta: string): void => {
           answer += delta;
           setTurns([...history, { role: "assistant", content: answer }]);
-        });
-        setStats(result);
+        };
+
+        if (loaded.kind === "gpu") {
+          const { streamReply } = await import("@/lib/webllm/engine");
+          setStats(await streamReply(loaded.engine, history, onDelta));
+        } else {
+          const { streamCpuReply } = await import("@/lib/webllm/cpu-engine");
+          setStats(await streamCpuReply(loaded.engine, history, onDelta));
+        }
       } catch (cause) {
         setError(cause instanceof Error ? cause.message : "Generation failed.");
         setTurns(history);
@@ -125,14 +160,16 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     setTurns([]);
     setStats(null);
     setError(null);
-    void engineRef.current?.resetChat();
+    const loaded = engineRef.current;
+    if (loaded?.kind === "gpu") void loaded.engine.resetChat();
   }, []);
 
   return {
     status,
     device,
     appleSilicon,
-    modelId,
+    runtime,
+    modelId: runtime === "cpu" ? CPU_MODEL.file : modelId,
     cached,
     progress,
     turns,
