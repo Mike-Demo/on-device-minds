@@ -3,10 +3,12 @@
  * graphics chip. Runs llama.cpp compiled to WebAssembly inside a worker.
  *
  * Browser-only: import it lazily from an event handler or effect, never at
- * module scope of an SSR-evaluated file (it pulls in a .wasm asset URL).
+ * module scope of an SSR-evaluated file.
  */
 import type { Wllama } from "@wllama/wllama/esm/index.js";
-import wllamaWasmUrl from "@wllama/wllama/esm/wasm/wllama.wasm?url";
+
+/** Served as a static file from public/wasm, fetched only when this path is used. */
+const WLLAMA_WASM_URL = "/wasm/wllama.wasm";
 
 import type { ChatTurn, GenerationStats, LoadProgress } from "./engine";
 import { CPU_MODEL, CPU_MODEL_URL, SYSTEM_PROMPT } from "./models";
@@ -15,7 +17,7 @@ export async function createCpuEngine(
   onProgress: (progress: LoadProgress) => void,
 ): Promise<Wllama> {
   const { Wllama } = await import("@wllama/wllama/esm/index.js");
-  const engine = new Wllama({ default: wllamaWasmUrl }, { allowOffline: true });
+  const engine = new Wllama({ default: WLLAMA_WASM_URL }, { allowOffline: true });
 
   await engine.loadModelFromHF(
     { repo: CPU_MODEL.repo, file: CPU_MODEL.file },
