@@ -3,6 +3,8 @@ import { Suspense, lazy, useEffect } from "react";
 
 import { warmChatChunk } from "@/lib/prefetch";
 
+import "@/components/on-device-chat.css";
+
 import {
   SiteFooter,
   WaSpinner,
