@@ -60,6 +60,18 @@ function Licenses() {
                 },
               ],
             },
+            {
+              title: "Services",
+              entries: [
+                {
+                  name: "hCaptcha",
+                  author: "Intuition Machines, Inc.",
+                  license: "Proprietary service",
+                  url: "https://www.hcaptcha.com/",
+                  note: "Bot protection on the pre-flight gate before a model download.",
+                },
+              ],
+            },
           ]}
         />
       </main>
