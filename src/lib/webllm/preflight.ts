@@ -5,7 +5,7 @@
  */
 
 import { inspectDevice, isCpuRuntimeSupported, type DeviceReport } from "./device";
-import { CPU_MODEL, findModel, type RuntimeKind } from "./models";
+import { CPU_MODEL, CPU_MODEL_URL, findModel, type RuntimeKind } from "./models";
 
 export type CheckLevel = "pass" | "warn" | "fail" | "unknown";
 
