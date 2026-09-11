@@ -36,6 +36,8 @@ export interface OnDeviceChatApi extends OnDeviceChatState {
   selectModel: (modelId: string) => void;
   selectCpuModel: (modelId: string) => void;
   loadModel: () => Promise<void>;
+  unloadModel: () => void;
+  enableWarmStart: () => void;
   send: (prompt: string) => Promise<void>;
   reset: () => void;
 }
