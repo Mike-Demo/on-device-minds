@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import themeCss from "../design-system/font-awsome-web-awesome-171158/webawesome/theme.css?url";
 import { WEB_AWESOME_HTML_CLASSES } from "../design-system/font-awsome-web-awesome-171158/webawesome/setup";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { registerServiceWorker } from "../lib/pwa";
 
 function NotFoundComponent() {
   return (
@@ -81,6 +82,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "MikeDemo" },
+      { name: "theme-color", content: "#0071ec" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "On-device AI" },
       { name: "twitter:card", content: "summary_large_image" },
       {
         name: "google-site-verification",
@@ -99,6 +103,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // Design system tokens load last so their values take precedence.
       { rel: "stylesheet", href: themeCss },
       { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
     ],
   }),
   shellComponent: RootShell,
@@ -123,6 +129,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  // Offline support: guarded so it only ever runs on the published site.
+  useEffect(() => registerServiceWorker(), []);
 
   return (
     <QueryClientProvider client={queryClient}>
