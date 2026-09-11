@@ -12,10 +12,12 @@ import {
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { BrandMark } from "@/components/brand-mark";
+import { breadcrumbJsonLd, pageUrl, publisherRef, websiteRef } from "@/lib/seo";
 
 import "@/components/on-device-chat.css";
 
-const SITE_URL = "https://ai.mikedemo.dev";
+const FAQ_URL = pageUrl("/faq");
+
 
 const title = "Questions and troubleshooting — On-device AI demo";
 const description =
