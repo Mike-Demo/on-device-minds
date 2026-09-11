@@ -14,6 +14,7 @@ import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LicensesRouteImport } from './routes/licenses'
 import { Route as NeuralEngineRouteImport } from './routes/neural-engine'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ModelsLlama3InBrowserRouteImport } from './routes/models.llama-3-in-browser'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ModelsLlama3InBrowserRoute = ModelsLlama3InBrowserRouteImport.update({
+  id: '/models/llama-3-in-browser',
+  path: '/models/llama-3-in-browser',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,14 +70,33 @@ export interface FileRoutesById {
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/faq' | '/licenses' | '/neural-engine' | '/sitemap.xml'
+  fullPaths:
+    | '/'
+    | '/faq'
+    | '/licenses'
+    | '/neural-engine'
+    | '/sitemap.xml'
+    | '/models/llama-3-in-browser'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/faq' | '/licenses' | '/neural-engine' | '/sitemap.xml'
+  to:
+    | '/'
+    | '/faq'
+    | '/licenses'
+    | '/neural-engine'
+    | '/sitemap.xml'
+    | '/models/llama-3-in-browser'
   id:
-    '__root__' | '/' | '/faq' | '/licenses' | '/neural-engine' | '/sitemap.xml'
+    | '__root__'
+    | '/'
+    | '/faq'
+    | '/licenses'
+    | '/neural-engine'
+    | '/sitemap.xml'
+    | '/models/llama-3-in-browser'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -78,6 +105,7 @@ export interface RootRouteChildren {
   LicensesRoute: typeof LicensesRoute
   NeuralEngineRoute: typeof NeuralEngineRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ModelsLlama3InBrowserRoute: typeof ModelsLlama3InBrowserRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -117,6 +145,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/models/llama-3-in-browser': {
+      id: '/models/llama-3-in-browser'
+      path: '/models/llama-3-in-browser'
+      fullPath: '/models/llama-3-in-browser'
+      preLoaderRoute: typeof ModelsLlama3InBrowserRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -126,6 +161,7 @@ const rootRouteChildren: RootRouteChildren = {
   LicensesRoute: LicensesRoute,
   NeuralEngineRoute: NeuralEngineRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ModelsLlama3InBrowserRoute: ModelsLlama3InBrowserRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
