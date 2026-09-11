@@ -1,6 +1,7 @@
 import { ClientOnly, Link, createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect } from "react";
 
+import { BrandMark } from "@/components/brand-mark";
 import { InstallApp } from "@/components/install-app";
 import { warmChatChunk } from "@/lib/prefetch";
 
@@ -62,7 +63,7 @@ export const Route = createFileRoute("/")({
 
 function Loading() {
   return (
-    <div className="odc-shell wa-cluster wa-gap-s wa-align-items-center">
+    <div className="odc-shell odc-shell-body wa-cluster wa-gap-s wa-align-items-center">
       <WaSpinner />
       <span>Loading…</span>
     </div>
@@ -76,6 +77,20 @@ function Index() {
     <>
       <WebAwesomeLoader />
       <main>
+        {/* Rendered on the server so the headline is in the HTML immediately,
+            before the browser-only chat below it loads. */}
+        <header className="odc-shell odc-shell-head wa-stack wa-gap-s">
+          <div className="wa-cluster wa-gap-s wa-align-items-center">
+            <BrandMark className="odc-brand-mark" />
+            <h1>An AI model running inside this page</h1>
+          </div>
+
+          <p className="odc-lede">
+            Nothing here talks to a server. The model downloads once into this browser and then
+            answers on your own hardware — offline, private, and free to run.
+          </p>
+        </header>
+
         <ClientOnly fallback={<Loading />}>
           <Suspense fallback={<Loading />}>
             <OnDeviceChat />

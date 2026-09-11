@@ -11,6 +11,16 @@
   padding-block: var(--wa-space-2xl);
 }
 
+.odc-shell-head {
+  /* The header and the chat below it are two blocks in one visual column,
+     so the padding between them is collapsed to a single gap. */
+  padding-block-end: 0;
+}
+
+.odc-shell-body {
+  padding-block-start: var(--wa-space-l);
+}
+
 .odc-shell h1 {
   font-size: var(--wa-font-size-3xl);
   line-height: var(--wa-line-height-condensed);

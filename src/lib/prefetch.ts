@@ -22,5 +22,10 @@ function onIdle(task: () => void): () => void {
 export function warmChatChunk(): () => void {
   return onIdle(() => {
     void import("@/components/on-device-chat");
+    // The chat pulls this 790 KB element bundle as a second step; request it
+    // in the same idle pass so the two downloads overlap.
+    void import(
+      "@/design-system/font-awsome-web-awesome-171158/webawesome/vendor/webawesome.bundle.js"
+    );
   });
 }
