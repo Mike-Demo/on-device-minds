@@ -50,7 +50,9 @@ export default defineConfig({
         },
         workbox: {
           // The inference runtime is fetched on demand and cached by its own layer.
-          globIgnores: ["**/*.wasm"],
+          // Keep the install payload small: the multi-megabyte inference runtime
+          // is cached on demand by the asset rule below instead.
+          globIgnores: ["**/*.wasm", "**/lib-*.js", "**/*.worker-*.js"],
           navigateFallback: null,
           runtimeCaching: [
             {
@@ -68,7 +70,7 @@ export default defineConfig({
             {
               // Hashed build assets never change under the same URL.
               urlPattern: ({ url, sameOrigin }) =>
-                sameOrigin === true && url.pathname.startsWith("/_build/"),
+                sameOrigin === true && url.pathname.startsWith("/assets/"),
               handler: "CacheFirst",
               options: {
                 cacheName: "assets",
