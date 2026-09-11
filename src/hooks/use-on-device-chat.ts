@@ -97,15 +97,39 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     };
   }, [runtime, modelId, cpuModelId]);
 
-  const selectModel = useCallback((next: string) => {
-    if (engineRef.current) return;
-    setModelId(next);
+  const warmed = useRef(false);
+  const [warmStartAllowed, setWarmStartAllowed] = useState(false);
+
+  /** Drop the loaded model so a different one can be chosen. */
+  const unloadModel = useCallback(() => {
+    warmed.current = true; // never auto-restart after a deliberate unload
+    engineRef.current = null;
+    setTurns([]);
+    setStats(null);
+    setError(null);
+    setProgress(null);
+    setStatus((current) => (current === "checking" || current === "unsupported" ? current : "idle"));
   }, []);
 
-  const selectCpuModel = useCallback((next: string) => {
-    if (engineRef.current) return;
-    setCpuModelId(next);
-  }, []);
+  const selectModel = useCallback(
+    (next: string) => {
+      setModelId((current) => {
+        if (current !== next && engineRef.current) unloadModel();
+        return next;
+      });
+    },
+    [unloadModel],
+  );
+
+  const selectCpuModel = useCallback(
+    (next: string) => {
+      setCpuModelId((current) => {
+        if (current !== next && engineRef.current) unloadModel();
+        return next;
+      });
+    },
+    [unloadModel],
+  );
 
   const loadModel = useCallback(async () => {
     if (engineRef.current || status === "loading" || runtime === "none") return;
@@ -133,25 +157,34 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     }
   }, [cpuModelId, modelId, runtime, status]);
 
+  /** Called once the visitor has passed the pre-flight gate and can see the picker. */
+  const enableWarmStart = useCallback(() => {
+    setWarmStartAllowed(true);
+  }, []);
+
   /**
-   * Processor mode is slow to get going, so start the download as soon as the
-   * device check has passed — but never on a metered or offline connection,
-   * and never when the model is already saved here.
+   * Processor mode is slow to get going, so start the download shortly after
+   * the visitor reaches the chat — but never before the gate is cleared, never
+   * on a metered or offline connection, and never when the model is saved here.
    */
-  const warmed = useRef(false);
   useEffect(() => {
-    if (runtime !== "cpu" || status !== "idle" || cached || warmed.current) return;
+    if (!warmStartAllowed || runtime !== "cpu" || status !== "idle" || cached || warmed.current) {
+      return;
+    }
     let active = true;
-    void (async () => {
-      const { isCellular, isOffline } = await import("@/lib/webllm/preflight");
-      if (!active || isOffline() || isCellular()) return;
-      warmed.current = true;
-      void loadModel();
-    })();
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        const { isCellular, isOffline } = await import("@/lib/webllm/preflight");
+        if (!active || isOffline() || isCellular()) return;
+        warmed.current = true;
+        void loadModel();
+      })();
+    }, 4000);
     return () => {
       active = false;
+      window.clearTimeout(timer);
     };
-  }, [cached, loadModel, runtime, status]);
+  }, [cached, loadModel, runtime, status, warmStartAllowed]);
 
   const send = useCallback(
     async (prompt: string) => {
