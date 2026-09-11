@@ -330,6 +330,7 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
     processorCheck(),
     memoryCheck(),
     await storageCheck(downloadMb),
+    networkCheck(downloadMb, cached),
     connectionCheck(downloadMb, cached),
   ];
 
