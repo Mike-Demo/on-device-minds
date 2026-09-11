@@ -37,6 +37,8 @@ interface NavigatorExtras {
     readonly effectiveType?: string;
     readonly downlink?: number;
     readonly saveData?: boolean;
+    readonly type?: string;
+    readonly rtt?: number;
   };
 }
 
