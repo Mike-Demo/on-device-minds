@@ -27,14 +27,19 @@ export function OnDeviceChat(): ReactElement {
   const [gateChecked, setGateChecked] = useState(false);
   
 
+  const { enableWarmStart } = chat;
+
   useEffect(() => {
+    let cleared = false;
     try {
-      setGateCleared(window.sessionStorage.getItem(GATE_STORAGE_KEY) === "true");
+      cleared = window.sessionStorage.getItem(GATE_STORAGE_KEY) === "true";
     } catch {
-      setGateCleared(false);
+      cleared = false;
     }
+    setGateCleared(cleared);
     setGateChecked(true);
-  }, []);
+    if (cleared) enableWarmStart();
+  }, [enableWarmStart]);
 
   const clearGate = (): void => {
     try {
@@ -43,6 +48,7 @@ export function OnDeviceChat(): ReactElement {
       /* private mode: the gate simply reappears next visit */
     }
     setGateCleared(true);
+    enableWarmStart();
   };
   const selectRef = useRef<HTMLElement | null>(null);
   const cpuSelectRef = useRef<HTMLElement | null>(null);
@@ -220,6 +226,15 @@ export function OnDeviceChat(): ReactElement {
             <WaBadge variant={cpuOnly ? "warning" : "success"} appearance="outlined" pill>
               {cpuOnly ? "Processor only (slower)" : "Graphics accelerated"}
             </WaBadge>
+            <WaButton
+              appearance="plain"
+              size="s"
+              onClick={chat.unloadModel}
+              disabled={chat.generating}
+            >
+              <WaIcon slot="start" name="arrows-rotate" />
+              Change model
+            </WaButton>
           </div>
 
           <div className="odc-log">
