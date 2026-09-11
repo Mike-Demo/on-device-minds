@@ -214,24 +214,31 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
   const model = findModel(modelId);
   const device = await inspectDevice();
 
+  const { isCpuRuntimeSupported } = await import("./cpu-engine");
+  const runtime: RuntimeKind = device.webgpu ? "gpu" : isCpuRuntimeSupported() ? "cpu" : "none";
+  const downloadMb = runtime === "cpu" ? CPU_MODEL.approxDownloadMb : model.approxDownloadMb;
+
   let cached = false;
-  if (device.webgpu) {
-    try {
+  try {
+    if (runtime === "gpu") {
       const { isModelCached } = await import("./engine");
       cached = await isModelCached(modelId);
-    } catch {
-      cached = false;
+    } else if (runtime === "cpu") {
+      const { isCpuModelCached } = await import("./cpu-engine");
+      cached = await isCpuModelCached();
     }
+  } catch {
+    cached = false;
   }
 
   const { isAppleSilicon } = await import("./device");
 
   const checks: readonly PreflightCheck[] = [
-    graphicsCheck(device),
+    graphicsCheck(device, runtime),
     processorCheck(),
     memoryCheck(),
-    await storageCheck(model.approxDownloadMb),
-    connectionCheck(model.approxDownloadMb, cached),
+    await storageCheck(downloadMb),
+    connectionCheck(downloadMb, cached),
   ];
 
   const verdict: PreflightVerdict = checks.some((check) => check.level === "fail")
@@ -240,5 +247,5 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
       ? "slow"
       : "ready";
 
-  return { device, appleSilicon: isAppleSilicon(), cached, checks, verdict };
+  return { device, appleSilicon: isAppleSilicon(), cached, checks, verdict, runtime, downloadMb };
 }
