@@ -312,6 +312,12 @@ function FaqPage(): ReactElement {
               <Link to="/neural-engine" className="odc-meta">
                 Why the Neural Engine isn&apos;t used
               </Link>
+              <Link to="/diagnostics" className="odc-meta">
+                Check this device and get tips
+              </Link>
+              <Link to="/models/compare" className="odc-meta">
+                Compare the models
+              </Link>
             </div>
           </header>
 
