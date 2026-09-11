@@ -9,7 +9,7 @@ import {
   type DeviceReport,
 } from "@/lib/webllm/device";
 import type { ChatTurn, GenerationStats, LoadProgress } from "@/lib/webllm/engine";
-import { DEFAULT_MODEL_ID, type RuntimeKind } from "@/lib/webllm/models";
+import { DEFAULT_CPU_MODEL_ID, DEFAULT_MODEL_ID, type RuntimeKind } from "@/lib/webllm/models";
 
 export type EngineStatus = "checking" | "unsupported" | "idle" | "loading" | "ready" | "error";
 
@@ -23,6 +23,7 @@ export interface OnDeviceChatState {
   readonly appleSilicon: boolean;
   readonly runtime: RuntimeKind;
   readonly modelId: string;
+  readonly cpuModelId: string;
   readonly cached: boolean;
   readonly progress: LoadProgress | null;
   readonly turns: readonly ChatTurn[];
@@ -33,6 +34,7 @@ export interface OnDeviceChatState {
 
 export interface OnDeviceChatApi extends OnDeviceChatState {
   selectModel: (modelId: string) => void;
+  selectCpuModel: (modelId: string) => void;
   loadModel: () => Promise<void>;
   send: (prompt: string) => Promise<void>;
   reset: () => void;
@@ -46,6 +48,7 @@ export function useOnDeviceChat(): OnDeviceChatApi {
   const [appleSilicon, setAppleSilicon] = useState(false);
   const [runtime, setRuntime] = useState<RuntimeKind>("none");
   const [modelId, setModelId] = useState<string>(DEFAULT_MODEL_ID);
+  const [cpuModelId, setCpuModelId] = useState<string>(DEFAULT_CPU_MODEL_ID);
   const [cached, setCached] = useState(false);
   const [progress, setProgress] = useState<LoadProgress | null>(null);
   const [turns, setTurns] = useState<readonly ChatTurn[]>([]);
@@ -80,7 +83,7 @@ export function useOnDeviceChat(): OnDeviceChatApi {
           if (active) setCached(hit);
         } else {
           const { isCpuModelCached } = await import("@/lib/webllm/cpu-engine");
-          const hit = await isCpuModelCached();
+          const hit = await isCpuModelCached(cpuModelId);
           if (active) setCached(hit);
         }
       } catch {
@@ -90,11 +93,16 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     return () => {
       active = false;
     };
-  }, [runtime, modelId]);
+  }, [runtime, modelId, cpuModelId]);
 
   const selectModel = useCallback((next: string) => {
     if (engineRef.current) return;
     setModelId(next);
+  }, []);
+
+  const selectCpuModel = useCallback((next: string) => {
+    if (engineRef.current) return;
+    setCpuModelId(next);
   }, []);
 
   const loadModel = useCallback(async () => {
@@ -109,7 +117,10 @@ export function useOnDeviceChat(): OnDeviceChatApi {
         engineRef.current = { kind: "gpu", engine: await createOnDeviceEngine(modelId, setProgress) };
       } else {
         const { createCpuEngine } = await import("@/lib/webllm/cpu-engine");
-        engineRef.current = { kind: "cpu", engine: await createCpuEngine(setProgress) };
+        engineRef.current = {
+          kind: "cpu",
+          engine: await createCpuEngine(cpuModelId, setProgress),
+        };
       }
       setStatus("ready");
       setCached(true);
@@ -118,7 +129,27 @@ export function useOnDeviceChat(): OnDeviceChatApi {
       setError(cause instanceof Error ? cause.message : "The model could not be loaded.");
       setStatus("error");
     }
-  }, [modelId, runtime, status]);
+  }, [cpuModelId, modelId, runtime, status]);
+
+  /**
+   * Processor mode is slow to get going, so start the download as soon as the
+   * device check has passed — but never on a metered or offline connection,
+   * and never when the model is already saved here.
+   */
+  const warmed = useRef(false);
+  useEffect(() => {
+    if (runtime !== "cpu" || status !== "idle" || cached || warmed.current) return;
+    let active = true;
+    void (async () => {
+      const { isCellular, isOffline } = await import("@/lib/webllm/preflight");
+      if (!active || isOffline() || isCellular()) return;
+      warmed.current = true;
+      void loadModel();
+    })();
+    return () => {
+      active = false;
+    };
+  }, [cached, loadModel, runtime, status]);
 
   const send = useCallback(
     async (prompt: string) => {
@@ -170,6 +201,7 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     appleSilicon,
     runtime,
     modelId,
+    cpuModelId,
     cached,
     progress,
     turns,
@@ -177,6 +209,7 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     stats,
     error,
     selectModel,
+    selectCpuModel,
     loadModel,
     send,
     reset,

@@ -5,7 +5,13 @@
  */
 
 import { inspectDevice, isCpuRuntimeSupported, type DeviceReport } from "./device";
-import { CPU_MODEL, CPU_MODEL_URL, findModel, type RuntimeKind } from "./models";
+import {
+  DEFAULT_CPU_MODEL_ID,
+  cpuModelUrl,
+  findCpuModel,
+  findModel,
+  type RuntimeKind,
+} from "./models";
 
 export type CheckLevel = "pass" | "warn" | "fail" | "unknown";
 
@@ -183,13 +189,14 @@ async function storageCheck(neededMb: number): Promise<PreflightCheck> {
 
 const WIFI_ADVICE = "Switch to Wi-Fi first if you can, to avoid data charges and a slow start.";
 
-function isOffline(): boolean {
+export function isOffline(): boolean {
   return typeof navigator !== "undefined" && navigator.onLine === false;
 }
 
-function isCellular(): boolean {
+export function isCellular(): boolean {
   const connection = nav()?.connection;
   if (!connection) return false;
+  if (connection.saveData === true) return true;
   if (connection.type === "cellular") return true;
   const effective = connection.effectiveType;
   return effective === "slow-2g" || effective === "2g" || effective === "3g";
@@ -256,7 +263,7 @@ export async function measureDownloadSpeed(): Promise<{ mbps: number } | null> {
   const timer = setTimeout(() => controller.abort(), 15_000);
   try {
     const started = performance.now();
-    const response = await fetch(CPU_MODEL_URL, {
+    const response = await fetch(cpuModelUrl(findCpuModel(DEFAULT_CPU_MODEL_ID)), {
       cache: "no-store",
       signal: controller.signal,
       headers: { Range: `bytes=0-${SPEED_SAMPLE_BYTES - 1}` },
@@ -303,12 +310,16 @@ function connectionCheck(neededMb: number, cached: boolean): PreflightCheck {
   };
 }
 
-export async function runPreflight(modelId: string): Promise<PreflightReport> {
+export async function runPreflight(
+  modelId: string,
+  cpuModelId: string = DEFAULT_CPU_MODEL_ID,
+): Promise<PreflightReport> {
   const model = findModel(modelId);
   const device = await inspectDevice();
 
   const runtime: RuntimeKind = device.webgpu ? "gpu" : isCpuRuntimeSupported() ? "cpu" : "none";
-  const downloadMb = runtime === "cpu" ? CPU_MODEL.approxDownloadMb : model.approxDownloadMb;
+  const downloadMb =
+    runtime === "cpu" ? findCpuModel(cpuModelId).approxDownloadMb : model.approxDownloadMb;
 
   let cached = false;
   try {
@@ -317,7 +328,7 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
       cached = await isModelCached(modelId);
     } else if (runtime === "cpu") {
       const { isCpuModelCached } = await import("./cpu-engine");
-      cached = await isCpuModelCached();
+      cached = await isCpuModelCached(cpuModelId);
     }
   } catch {
     cached = false;

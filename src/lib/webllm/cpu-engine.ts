@@ -8,22 +8,45 @@
 import type { Wllama } from "@wllama/wllama/esm/index.js";
 
 import type { ChatTurn, GenerationStats, LoadProgress } from "./engine";
-import { CPU_MODEL, CPU_MODEL_URL, SYSTEM_PROMPT } from "./models";
+import { SYSTEM_PROMPT, cpuModelUrl, findCpuModel } from "./models";
 
 /** Served as a static file from public/wasm, fetched only when this path is used. */
 const WLLAMA_WASM_URL = "/wasm/wllama.wasm";
 
+/**
+ * Older laptops and tablets stall when every core is claimed, and llama.cpp
+ * gains little past four threads on a model this small.
+ */
+function threadCount(): number {
+  const cores =
+    typeof navigator !== "undefined" && typeof navigator.hardwareConcurrency === "number"
+      ? navigator.hardwareConcurrency
+      : 4;
+  return Math.max(1, Math.min(4, cores - 1));
+}
+
 export async function createCpuEngine(
+  modelId: string,
   onProgress: (progress: LoadProgress) => void,
 ): Promise<Wllama> {
+  const model = findCpuModel(modelId);
   const { Wllama } = await import("@wllama/wllama/esm/index.js");
-  const engine = new Wllama({ default: WLLAMA_WASM_URL }, { allowOffline: true });
+  const engine = new Wllama(
+    { default: WLLAMA_WASM_URL },
+    // Several ranged requests finish sooner than one long stream.
+    { allowOffline: true, parallelDownloads: 4 },
+  );
 
   await engine.loadModelFromHF(
-    { repo: CPU_MODEL.repo, file: CPU_MODEL.file },
+    { repo: model.repo, file: model.file },
     {
-      n_ctx: 2048,
+      // A short context is all a 360M model needs, and it keeps the memory
+      // llama.cpp reserves at startup small on low-end machines.
+      n_ctx: 1024,
+      n_batch: 128,
+      n_threads: threadCount(),
       n_gpu_layers: 0,
+      useCache: true,
       progressCallback: ({ loaded, total }) => {
         const fraction = total > 0 ? loaded / total : 0;
         onProgress({
@@ -37,11 +60,11 @@ export async function createCpuEngine(
   return engine;
 }
 
-export async function isCpuModelCached(): Promise<boolean> {
+export async function isCpuModelCached(modelId: string): Promise<boolean> {
   try {
     const { CacheManager } = await import("@wllama/wllama/esm/index.js");
     const cache = new CacheManager();
-    const name = await cache.getNameFromURL(CPU_MODEL_URL);
+    const name = await cache.getNameFromURL(cpuModelUrl(findCpuModel(modelId)));
     const metadata = await cache.getMetadata(name);
     if (!metadata) return false;
     const size = await cache.getSize(name);
