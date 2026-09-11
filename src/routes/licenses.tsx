@@ -59,6 +59,27 @@ function Licenses() {
                   url: "https://github.com/meta-llama/llama-models/blob/main/models/llama3_2/LICENSE",
                   note: "Optional model choice in the demo.",
                 },
+                {
+                  name: "wllama",
+                  author: "Xuan-Son Nguyen",
+                  license: "MIT",
+                  url: "https://github.com/ngxson/wllama",
+                  note: "Runs the model on the processor when graphics acceleration is unavailable.",
+                },
+                {
+                  name: "llama.cpp",
+                  author: "Georgi Gerganov and contributors",
+                  license: "MIT",
+                  url: "https://github.com/ggml-org/llama.cpp",
+                  note: "The inference engine wllama compiles to WebAssembly.",
+                },
+                {
+                  name: "Qwen2.5-0.5B-Instruct GGUF",
+                  author: "Alibaba Cloud / Qwen team, quantised by bartowski",
+                  license: "Apache 2.0",
+                  url: "https://huggingface.co/bartowski/Qwen2.5-0.5B-Instruct-GGUF",
+                  note: "The model used in processor-only mode.",
+                },
               ],
             },
             {

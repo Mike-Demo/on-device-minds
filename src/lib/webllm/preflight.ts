@@ -4,8 +4,8 @@
  * importable on the server (where it simply reports "unknown").
  */
 
-import { inspectDevice, type DeviceReport } from "./device";
-import { findModel } from "./models";
+import { inspectDevice, isCpuRuntimeSupported, type DeviceReport } from "./device";
+import { CPU_MODEL, findModel, type RuntimeKind } from "./models";
 
 export type CheckLevel = "pass" | "warn" | "fail" | "unknown";
 
@@ -24,6 +24,10 @@ export interface PreflightReport {
   readonly cached: boolean;
   readonly checks: readonly PreflightCheck[];
   readonly verdict: PreflightVerdict;
+  /** Which execution path will actually be used. */
+  readonly runtime: RuntimeKind;
+  /** Download size for the model that path will use. */
+  readonly downloadMb: number;
 }
 
 interface NavigatorExtras {
@@ -46,13 +50,16 @@ function isSmallScreenDevice(): boolean {
   return coarse && Math.min(window.screen.width, window.screen.height) < 700;
 }
 
-function graphicsCheck(device: DeviceReport): PreflightCheck {
+function graphicsCheck(device: DeviceReport, runtime: RuntimeKind): PreflightCheck {
   if (!device.webgpu) {
     return {
       id: "graphics",
       label: "Graphics acceleration",
-      level: "fail",
-      detail: device.reason ?? "This browser cannot use the graphics chip, so no model can run here.",
+      level: runtime === "cpu" ? "warn" : "fail",
+      detail:
+        runtime === "cpu"
+          ? "Not available here, so the model will run on the processor instead. It works, but answers come out much more slowly."
+          : (device.reason ?? "This browser cannot use the graphics chip, so no model can run here."),
     };
   }
   return {
@@ -207,24 +214,30 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
   const model = findModel(modelId);
   const device = await inspectDevice();
 
+  const runtime: RuntimeKind = device.webgpu ? "gpu" : isCpuRuntimeSupported() ? "cpu" : "none";
+  const downloadMb = runtime === "cpu" ? CPU_MODEL.approxDownloadMb : model.approxDownloadMb;
+
   let cached = false;
-  if (device.webgpu) {
-    try {
+  try {
+    if (runtime === "gpu") {
       const { isModelCached } = await import("./engine");
       cached = await isModelCached(modelId);
-    } catch {
-      cached = false;
+    } else if (runtime === "cpu") {
+      const { isCpuModelCached } = await import("./cpu-engine");
+      cached = await isCpuModelCached();
     }
+  } catch {
+    cached = false;
   }
 
   const { isAppleSilicon } = await import("./device");
 
   const checks: readonly PreflightCheck[] = [
-    graphicsCheck(device),
+    graphicsCheck(device, runtime),
     processorCheck(),
     memoryCheck(),
-    await storageCheck(model.approxDownloadMb),
-    connectionCheck(model.approxDownloadMb, cached),
+    await storageCheck(downloadMb),
+    connectionCheck(downloadMb, cached),
   ];
 
   const verdict: PreflightVerdict = checks.some((check) => check.level === "fail")
@@ -233,5 +246,5 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
       ? "slow"
       : "ready";
 
-  return { device, appleSilicon: isAppleSilicon(), cached, checks, verdict };
+  return { device, appleSilicon: isAppleSilicon(), cached, checks, verdict, runtime, downloadMb };
 }

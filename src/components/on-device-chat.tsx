@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactElement } from "react";
 
 import {
+  WaBadge,
   WaButton,
   WaCallout,
   WaCard,
@@ -13,7 +14,7 @@ import {
   WaTextarea,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
-import { ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
+import { CPU_MODEL, ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
 
 import { BrandMark } from "./brand-mark";
 import { DevicePanel } from "./device-panel";
@@ -46,7 +47,11 @@ export function OnDeviceChat(): ReactElement {
   };
   const selectRef = useRef<HTMLElement | null>(null);
   const textareaRef = useRef<HTMLElement | null>(null);
-  const model = findModel(chat.modelId);
+  const cpuOnly = chat.runtime === "cpu";
+  const gpuModel = findModel(chat.modelId);
+  const model = cpuOnly
+    ? { label: CPU_MODEL.label, blurb: CPU_MODEL.blurb, approxDownloadMb: CPU_MODEL.approxDownloadMb }
+    : gpuModel;
 
   useEffect(() => {
     const element = selectRef.current;
@@ -120,25 +125,40 @@ export function OnDeviceChat(): ReactElement {
         <WaCard appearance="outlined" with-header>
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="download" />
-            <h2 className="odc-card-heading">Choose a model and load it</h2>
+            <h2 className="odc-card-heading">
+              {cpuOnly ? "Load the processor-only model" : "Choose a model and load it"}
+            </h2>
           </div>
 
           <div className="wa-stack wa-gap-l">
-            <WaSelect
-              ref={selectRef}
-              label="Model"
-              value={chat.modelId}
-              hint={`${model.blurb} About ${model.approxDownloadMb} MB to download once.`}
-              disabled={chat.status === "loading"}
-              with-label
-              with-hint
-            >
-              {ON_DEVICE_MODELS.map((entry) => (
-                <WaOption key={entry.id} value={entry.id}>
-                  {entry.label}
-                </WaOption>
-              ))}
-            </WaSelect>
+            {cpuOnly ? (
+              <WaCallout variant="warning" appearance="outlined">
+                <WaIcon slot="icon" name="microchip" />
+                <strong>Running on the processor</strong>
+                <p>
+                  This browser can&apos;t use the graphics chip, so a single small model runs on the
+                  processor instead. It works, but answers appear far more slowly — often a few words
+                  a second.
+                </p>
+              </WaCallout>
+            ) : (
+              <WaSelect
+                ref={selectRef}
+                label="Model"
+                value={chat.modelId}
+                hint={`${model.blurb} About ${model.approxDownloadMb} MB to download once.`}
+                disabled={chat.status === "loading"}
+                with-label
+                with-hint
+              >
+                {ON_DEVICE_MODELS.map((entry) => (
+                  <WaOption key={entry.id} value={entry.id}>
+                    {entry.label}
+                  </WaOption>
+                ))}
+              </WaSelect>
+            )}
+
 
             {chat.status === "loading" ? (
               <div className="wa-stack wa-gap-xs">
@@ -177,6 +197,9 @@ export function OnDeviceChat(): ReactElement {
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="comments" />
             <h2 className="odc-card-heading">{model.label}</h2>
+            <WaBadge variant={cpuOnly ? "warning" : "success"} appearance="outlined" pill>
+              {cpuOnly ? "Processor only (slower)" : "Graphics accelerated"}
+            </WaBadge>
           </div>
 
           <div className="odc-log">

@@ -141,13 +141,19 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
         </div>
         <ul className="odc-gate-list wa-stack wa-gap-s">
           <li>
-            The model is downloaded once — about {model.approxDownloadMb} MB — and kept in this
-            browser, so it is instant the next time.
+            The model is downloaded once — about {report?.downloadMb ?? model.approxDownloadMb} MB —
+            and kept in this browser, so it is instant the next time.
           </li>
           <li>
             Everything runs on your own hardware. Nothing you type leaves this device, and there is
             no account, key, or server involved.
           </li>
+          {report?.runtime === "cpu" ? (
+            <li>
+              This browser can&apos;t use the graphics chip, so the model will run on the processor
+              instead. It still works — answers just come out much more slowly.
+            </li>
+          ) : null}
           <li>
             Web pages can only use the graphics chip. Apple&apos;s Neural Engine stays out of reach —{" "}
             <Link to="/neural-engine">why that is</Link>.
@@ -217,8 +223,10 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
                 {report.verdict === "ready"
                   ? "Everything the model needs is available. You can continue."
                   : report.verdict === "slow"
-                    ? "You can still continue — the download may take a while and answers may come slowly. Choosing the smallest model helps."
-                    : "One of the checks above rules it out. You can still read the explanation of how this works."}
+                    ? report.runtime === "cpu"
+                      ? "You can still continue. Without graphics acceleration the model runs on the processor, so expect answers to arrive slowly."
+                      : "You can still continue — the download may take a while and answers may come slowly. Choosing the smallest model helps."
+                    : "One of the checks above rules it out — this browser can use neither the graphics chip nor the processor fallback. You can still read the explanation of how this works."}
               </p>
             </WaCallout>
           </div>
