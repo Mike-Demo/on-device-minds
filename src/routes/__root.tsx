@@ -1,8 +1,7 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
-  createRootRouteWithContext,
+  createRootRoute,
   useRouter,
   HeadContent,
   Scripts,
@@ -75,7 +74,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRoute({
   staticData: { sitemap: false },
   head: () => ({
     meta: [
@@ -105,7 +104,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "dns-prefetch", href: "https://hcaptcha.com" },
       { rel: "preconnect", href: "https://huggingface.co", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://cdn-lfs-us-1.hf.co" },
-      { rel: "stylesheet", href: "https://cdn.jsdelivr.net/npm/@awesome.me/webawesome@3.12.0/dist/styles/webawesome.css" },
+      // Self-hosted copy of the pinned Web Awesome stylesheet (all @imports
+      // inlined), so the first paint never waits on a third-party connection.
+      { rel: "stylesheet", href: "/vendor/webawesome-3.12.0.css" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -138,15 +139,9 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
-
   // Offline support: guarded so it only ever runs on the published site.
   useEffect(() => registerServiceWorker(), []);
 
-  return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-    </QueryClientProvider>
-  );
+  // Required: nested routes render here. Removing <Outlet /> breaks all child routes.
+  return <Outlet />;
 }

@@ -63,7 +63,16 @@ export default defineConfig({
           // The inference runtime is fetched on demand and cached by its own layer.
           // Keep the install payload small: the multi-megabyte inference runtime
           // is cached on demand by the asset rule below instead.
-          globIgnores: ["**/*.wasm", "**/lib-*.js", "**/*.worker-*.js"],
+          globIgnores: [
+            "**/*.wasm",
+            "**/lib-*.js",
+            "**/*.worker-*.js",
+            // Never loaded: the site does not server-render shadow roots.
+            "**/webawesome.ssr.bundle-*.js",
+            // Processor-only runtime: fetched on demand, and only on devices
+            // without graphics acceleration.
+            "**/esm-*.js",
+          ],
           navigateFallback: null,
           runtimeCaching: [
             {
