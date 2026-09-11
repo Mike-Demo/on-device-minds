@@ -22,17 +22,20 @@ const title = "Why the Neural Engine isn't used — On-device AI demo";
 const description =
   "Browsers can only reach the graphics chip. Here's why the iPad Pro's Neural Engine stays out of reach on the web, and what a native app would change.";
 
-const SITE_URL = "https://ai.mikedemo.dev";
+const PAGE_URL = pageUrl("/neural-engine");
 
-const articleJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
+const jsonLd = articleJsonLd({
   headline: "Why the Neural Engine isn't used by a web page",
   description,
-  url: `${SITE_URL}/neural-engine`,
-  author: { "@type": "Person", name: "MikeDemo" },
-  mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/neural-engine` },
-};
+  path: "/neural-engine",
+  datePublished: "2026-08-20",
+  dateModified: "2026-09-11",
+});
+
+const crumbsJsonLd = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: "Why the Neural Engine isn't used", path: "/neural-engine" },
+]);
 
 export const Route = createFileRoute("/neural-engine")({
   staticData: { sitemap: true },
@@ -42,13 +45,17 @@ export const Route = createFileRoute("/neural-engine")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
-      { property: "og:url", content: "/neural-engine" },
+      { property: "og:url", content: PAGE_URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/neural-engine" }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify(articleJsonLd) }],
+    links: [{ rel: "canonical", href: PAGE_URL }],
+    scripts: [
+      { type: "application/ld+json", children: JSON.stringify(jsonLd) },
+      { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },
+    ],
   }),
+
   component: NeuralEnginePage,
 });
 
