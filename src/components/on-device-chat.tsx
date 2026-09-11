@@ -1,0 +1,203 @@
+import { useEffect, useRef, useState } from "react";
+import type { FormEvent, ReactElement } from "react";
+
+import {
+  WaButton,
+  WaCallout,
+  WaCard,
+  WaIcon,
+  WaOption,
+  WaProgressBar,
+  WaSelect,
+  WaSpinner,
+  WaTextarea,
+} from "@/design-system/font-awsome-web-awesome-171158";
+import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
+import { ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
+
+import { DevicePanel } from "./device-panel";
+import "./on-device-chat.css";
+
+export function OnDeviceChat(): ReactElement {
+  const chat = useOnDeviceChat();
+  const [draft, setDraft] = useState("");
+  const selectRef = useRef<HTMLElement | null>(null);
+  const textareaRef = useRef<HTMLElement | null>(null);
+  const model = findModel(chat.modelId);
+
+  useEffect(() => {
+    const element = selectRef.current;
+    if (!element) return;
+    const handler = (event: Event): void => {
+      const target = event.target as HTMLElement & { value?: string };
+      if (typeof target.value === "string") chat.selectModel(target.value);
+    };
+    element.addEventListener("change", handler);
+    return () => element.removeEventListener("change", handler);
+  }, [chat]);
+
+  useEffect(() => {
+    const element = textareaRef.current;
+    if (!element) return;
+    const handler = (event: Event): void => {
+      const target = event.target as HTMLElement & { value?: string };
+      if (typeof target.value === "string") setDraft(target.value);
+    };
+    element.addEventListener("input", handler);
+    return () => element.removeEventListener("input", handler);
+  }, [chat.status]);
+
+  const onSubmit = (event: FormEvent): void => {
+    event.preventDefault();
+    const prompt = draft;
+    setDraft("");
+    const element = textareaRef.current as (HTMLElement & { value?: string }) | null;
+    if (element) element.value = "";
+    void chat.send(prompt);
+  };
+
+  return (
+    <div className="odc-shell wa-stack wa-gap-2xl">
+      <header className="wa-stack wa-gap-s">
+        <h1>An AI model running inside this page</h1>
+        <p className="odc-lede">
+          Nothing here talks to a server. The model downloads once into this browser and then answers
+          on your own hardware — offline, private, and free to run.
+        </p>
+      </header>
+
+      {chat.status === "checking" ? (
+        <div className="wa-cluster wa-gap-s wa-align-items-center">
+          <WaSpinner />
+          <span className="odc-meta">Checking what this device can do…</span>
+        </div>
+      ) : null}
+
+      {chat.status === "unsupported" ? (
+        <WaCallout variant="warning" appearance="outlined">
+          <WaIcon slot="icon" name="triangle-exclamation" />
+          <strong>This device can&apos;t run a model in the browser</strong>
+          <p>{chat.device?.reason}</p>
+        </WaCallout>
+      ) : null}
+
+      {chat.status === "idle" || chat.status === "loading" || chat.status === "error" ? (
+        <WaCard appearance="outlined" with-header>
+          <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
+            <WaIcon name="download" />
+            <strong>Choose a model and load it</strong>
+          </div>
+
+          <div className="wa-stack wa-gap-l">
+            <WaSelect
+              ref={selectRef}
+              label="Model"
+              value={chat.modelId}
+              hint={`${model.blurb} About ${model.approxDownloadMb} MB to download once.`}
+              disabled={chat.status === "loading"}
+              with-label
+              with-hint
+            >
+              {ON_DEVICE_MODELS.map((entry) => (
+                <WaOption key={entry.id} value={entry.id}>
+                  {entry.label}
+                </WaOption>
+              ))}
+            </WaSelect>
+
+            {chat.status === "loading" ? (
+              <div className="wa-stack wa-gap-xs">
+                <WaProgressBar
+                  value={Math.round((chat.progress?.fraction ?? 0) * 100)}
+                  label="Downloading model"
+                />
+                <span className="odc-meta">{chat.progress?.text ?? "Preparing…"}</span>
+              </div>
+            ) : (
+              <div className="wa-cluster wa-gap-s wa-align-items-center">
+                <WaButton variant="brand" size="l" onClick={() => void chat.loadModel()}>
+                  <WaIcon slot="start" name="bolt" />
+                  {chat.cached ? "Start (already saved here)" : `Download & start (~${model.approxDownloadMb} MB)`}
+                </WaButton>
+                <span className="odc-meta">
+                  {chat.cached
+                    ? "This model is already stored in your browser, so it starts instantly."
+                    : "Downloaded once, then kept in this browser for next time."}
+                </span>
+              </div>
+            )}
+
+            {chat.error ? (
+              <WaCallout variant="danger" appearance="outlined">
+                <WaIcon slot="icon" name="circle-exclamation" />
+                {chat.error}
+              </WaCallout>
+            ) : null}
+          </div>
+        </WaCard>
+      ) : null}
+
+      {chat.status === "ready" ? (
+        <WaCard appearance="outlined" with-header with-footer>
+          <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
+            <WaIcon name="comments" />
+            <strong>{model.label}</strong>
+          </div>
+
+          <div className="odc-log">
+            {chat.turns.length === 0 ? (
+              <p className="odc-meta">
+                Ask it something short — a summary, a rewrite, a definition. It is a very small model,
+                so don&apos;t expect deep reasoning.
+              </p>
+            ) : null}
+
+            {chat.turns.map((turn, index) => (
+              <div
+                key={`${turn.role}-${index}`}
+                className={
+                  turn.role === "user"
+                    ? "odc-bubble odc-bubble-user"
+                    : `odc-bubble odc-bubble-assistant${
+                        chat.generating && index === chat.turns.length - 1 ? " odc-caret" : ""
+                      }`
+                }
+              >
+                {turn.content}
+              </div>
+            ))}
+          </div>
+
+          <form slot="footer" className="wa-stack wa-gap-s" onSubmit={onSubmit}>
+            <WaTextarea
+              ref={textareaRef}
+              label="Your message"
+              placeholder="Summarise this in one sentence…"
+              rows={3}
+              resize="auto"
+              disabled={chat.generating}
+              with-label
+            />
+            <div className="wa-cluster wa-gap-s wa-align-items-center">
+              <WaButton
+                type="submit"
+                variant="brand"
+                loading={chat.generating}
+                disabled={chat.generating || draft.trim().length === 0}
+              >
+                <WaIcon slot="start" name="paper-plane" />
+                Send
+              </WaButton>
+              <WaButton appearance="plain" onClick={chat.reset} disabled={chat.generating}>
+                Clear
+              </WaButton>
+            </div>
+            {chat.error ? <span className="odc-meta">{chat.error}</span> : null}
+          </form>
+        </WaCard>
+      ) : null}
+
+      <DevicePanel device={chat.device} appleSilicon={chat.appleSilicon} stats={chat.stats} />
+    </div>
+  );
+}
