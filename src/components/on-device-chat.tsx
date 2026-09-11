@@ -25,7 +25,7 @@ export function OnDeviceChat(): ReactElement {
   const chat = useOnDeviceChat();
   const [gateCleared, setGateCleared] = useState(false);
   const [gateChecked, setGateChecked] = useState(false);
-  const [draft, setDraft] = useState("");
+  
 
   useEffect(() => {
     try {
