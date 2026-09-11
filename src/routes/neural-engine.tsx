@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import type { ReactElement, ReactNode } from "react";
 
 import { warmChatChunk } from "@/lib/prefetch";
+import { articleJsonLd, breadcrumbJsonLd, pageUrl } from "@/lib/seo";
+
 
 import {
   SiteFooter,
