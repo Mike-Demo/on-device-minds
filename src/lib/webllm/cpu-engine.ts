@@ -7,11 +7,11 @@
  */
 import type { Wllama } from "@wllama/wllama/esm/index.js";
 
-/** Served as a static file from public/wasm, fetched only when this path is used. */
-const WLLAMA_WASM_URL = "/wasm/wllama.wasm";
-
 import type { ChatTurn, GenerationStats, LoadProgress } from "./engine";
 import { CPU_MODEL, CPU_MODEL_URL, SYSTEM_PROMPT } from "./models";
+
+/** Served as a static file from public/wasm, fetched only when this path is used. */
+const WLLAMA_WASM_URL = "/wasm/wllama.wasm";
 
 export async function createCpuEngine(
   onProgress: (progress: LoadProgress) => void,
