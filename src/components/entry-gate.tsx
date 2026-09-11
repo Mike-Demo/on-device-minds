@@ -135,6 +135,8 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
   }, []);
 
   const blocked = report?.verdict === "blocked";
+  const offline =
+    report?.checks.some((check) => check.id === "network" && check.level === "fail") ?? false;
   const canContinue = report !== null && !blocked && verified;
 
   const blockedReason = (): string | null => {
