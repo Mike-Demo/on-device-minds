@@ -233,17 +233,29 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           </div>
 
           <div className="wa-stack wa-gap-m">
-            {!captchaLoaded ? (
+            {phase === "loading" ? (
               <div className="wa-cluster wa-gap-s wa-align-items-center">
                 <WaSpinner />
                 <span className="odc-meta">Loading…</span>
               </div>
-            ) : siteKey ? (
+            ) : phase === "ready" && siteKey ? (
               <>
                 <p className="odc-meta">
                   Model downloads are large, so this keeps automated traffic away.
                 </p>
-                <HCaptcha siteKey={siteKey} onVerify={onVerify} onExpire={() => setVerified(false)} />
+                <HCaptcha
+                  key={attempt}
+                  siteKey={siteKey}
+                  onVerify={onVerify}
+                  onExpire={() => {
+                    setVerified(false);
+                    setCaptchaError("The check expired — tick the box again.");
+                  }}
+                  onError={() => {
+                    setVerified(false);
+                    setCaptchaError("The check ran into a problem. Please try again.");
+                  }}
+                />
                 {verifying ? <span className="odc-meta">Checking…</span> : null}
                 {captchaError ? <span className="odc-meta">{captchaError}</span> : null}
                 {verified ? (
@@ -251,11 +263,24 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
                     Verified
                   </WaBadge>
                 ) : null}
+                {!verified && !verifying && captchaError ? (
+                  <WaButton appearance="outlined" onClick={retry}>
+                    <WaIcon slot="start" name="rotate-right" />
+                    Try again
+                  </WaButton>
+                ) : null}
               </>
             ) : (
-              <p className="odc-meta">
-                The human check isn&apos;t set up yet, so you can continue without it.
-              </p>
+              <>
+                <p className="odc-meta">
+                  {captchaError ?? "The human check couldn't load."} You&apos;ll need it before
+                  continuing.
+                </p>
+                <WaButton appearance="outlined" onClick={retry}>
+                  <WaIcon slot="start" name="rotate-right" />
+                  Try again
+                </WaButton>
+              </>
             )}
           </div>
         </WaCard>
@@ -266,6 +291,10 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           <WaIcon slot="start" name="arrow-right" />
           Continue to the model
         </WaButton>
+        {!canContinue && !blocked ? (
+          <span className="odc-meta">{blockedReason()}</span>
+        ) : null}
+
         <Link to="/neural-engine" className="odc-meta">
           How this works on Apple hardware
         </Link>
