@@ -4,6 +4,15 @@ import { Suspense, lazy, useEffect } from "react";
 import { BrandMark } from "@/components/brand-mark";
 import { InstallApp } from "@/components/install-app";
 import { warmChatChunk } from "@/lib/prefetch";
+import {
+  SITE_NAME,
+  WEBSITE_ID,
+  pageUrl,
+  publisherJsonLd,
+  publisherRef,
+  websiteRef,
+} from "@/lib/seo";
+
 
 import "@/components/on-device-chat.css";
 
