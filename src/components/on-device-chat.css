@@ -17,6 +17,14 @@
   margin-block: 0;
 }
 
+.odc-brand-mark {
+  inline-size: var(--wa-font-size-3xl);
+  block-size: var(--wa-font-size-3xl);
+  flex: none;
+  color: var(--wa-color-neutral-fill-loud);
+}
+
+
 .odc-lede {
   color: var(--wa-color-text-quiet);
   /* Same reading measure the design system's own .wa-licenses-lede uses. */

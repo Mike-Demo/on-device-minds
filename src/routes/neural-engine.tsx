@@ -10,7 +10,9 @@ import {
   WaIcon,
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
+import { BrandMark } from "@/components/brand-mark";
 import { NeuralEngineReadout } from "@/components/neural-engine-readout";
+
 import "@/components/on-device-chat.css";
 
 const title = "Why the Neural Engine isn't used — On-device AI demo";
@@ -60,7 +62,11 @@ function NeuralEnginePage(): ReactElement {
       <main>
         <div className="odc-shell wa-stack wa-gap-2xl">
           <header className="wa-stack wa-gap-s">
-            <h1>Why the Neural Engine isn&apos;t doing the work</h1>
+            <div className="wa-cluster wa-gap-s wa-align-items-center">
+              <BrandMark className="odc-brand-mark" />
+              <h1>Why the Neural Engine isn&apos;t doing the work</h1>
+            </div>
+
             <p className="odc-lede">
               The chat on this site runs the model on your graphics chip. The Neural Engine — the
               dedicated AI chip in an iPad Pro, iPhone, or Mac — is reserved for installed apps. No
