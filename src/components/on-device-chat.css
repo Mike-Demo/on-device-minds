@@ -1,0 +1,67 @@
+/*
+ * Layout-only rules for the on-device chat surface.
+ * Every value is a Web Awesome design token; no raw literals.
+ */
+
+.odc-shell {
+  /* Same container measure the design system's own .wa-licenses page uses. */
+  max-inline-size: 48rem;
+  margin-inline: auto;
+  padding-inline: var(--wa-space-l);
+  padding-block: var(--wa-space-2xl);
+}
+
+.odc-shell h1 {
+  font-size: var(--wa-font-size-3xl);
+  line-height: var(--wa-line-height-condensed);
+  margin-block: 0;
+}
+
+.odc-lede {
+  color: var(--wa-color-text-quiet);
+  /* Same reading measure the design system's own .wa-licenses-lede uses. */
+  max-inline-size: 60ch;
+}
+
+.odc-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wa-space-m);
+}
+
+.odc-bubble {
+  padding-block: var(--wa-space-s);
+  padding-inline: var(--wa-space-m);
+  border-radius: var(--wa-border-radius-l);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-inline-size: 100%;
+}
+
+.odc-bubble-user {
+  background-color: var(--wa-color-brand-fill-quiet);
+  color: var(--wa-color-brand-on-quiet);
+  align-self: flex-end;
+}
+
+.odc-bubble-assistant {
+  background-color: var(--wa-color-surface-lowered);
+  color: var(--wa-color-text-normal);
+  align-self: flex-start;
+}
+
+.odc-meta {
+  color: var(--wa-color-text-quiet);
+  font-size: var(--wa-font-size-s);
+}
+
+.odc-stat-value {
+  font-family: var(--wa-font-family-code);
+  font-size: var(--wa-font-size-l);
+  color: var(--wa-color-text-normal);
+}
+
+.odc-caret::after {
+  content: "\258c";
+  color: var(--wa-color-text-quiet);
+}

@@ -1,5 +1,8 @@
 {
   "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts", "eslint.config.js"],
+  // The design system's optional server-side renderer needs npm packages this
+  // app deliberately does not install; it is never imported here.
+  "exclude": ["src/design-system/**/ssr/render.server.ts"],
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
