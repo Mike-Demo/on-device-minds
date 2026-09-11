@@ -22,29 +22,23 @@ const title = "Run Llama 3 in your browser — no server, no install";
 const description =
   "Llama 3.2 1B runs entirely inside this page on your graphics chip. What it downloads, what hardware it needs, how fast it is, and how to try it.";
 
-const SITE_URL = "https://ai.mikedemo.dev";
-const PAGE_URL = `${SITE_URL}/models/llama-3-in-browser`;
+const PAGE_PATH = "/models/llama-3-in-browser";
+const PAGE_URL = pageUrl(PAGE_PATH);
 
 const LLAMA = ON_DEVICE_MODELS.find((model) => model.id.startsWith("Llama-3.2-1B"));
 
-const articleJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "Article",
+const jsonLd = articleJsonLd({
   headline: "Run Llama 3 in your browser",
   description,
-  url: PAGE_URL,
-  author: { "@type": "Person", name: "MikeDemo" },
-  mainEntityOfPage: { "@type": "WebPage", "@id": PAGE_URL },
-};
+  path: PAGE_PATH,
+  datePublished: "2026-09-10",
+  dateModified: "2026-09-11",
+});
 
-const breadcrumbJsonLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-    { "@type": "ListItem", position: 2, name: "Run Llama 3 in your browser", item: PAGE_URL },
-  ],
-};
+const crumbsJsonLd = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: "Run Llama 3 in your browser", path: PAGE_PATH },
+]);
 
 export const Route = createFileRoute("/models/llama-3-in-browser")({
   staticData: { sitemap: true },
@@ -54,16 +48,17 @@ export const Route = createFileRoute("/models/llama-3-in-browser")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
-      { property: "og:url", content: "/models/llama-3-in-browser" },
+      { property: "og:url", content: PAGE_URL },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/models/llama-3-in-browser" }],
+    links: [{ rel: "canonical", href: PAGE_URL }],
     scripts: [
-      { type: "application/ld+json", children: JSON.stringify(articleJsonLd) },
-      { type: "application/ld+json", children: JSON.stringify(breadcrumbJsonLd) },
+      { type: "application/ld+json", children: JSON.stringify(jsonLd) },
+      { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },
     ],
   }),
+
   component: LlamaInBrowserPage,
 });
 
