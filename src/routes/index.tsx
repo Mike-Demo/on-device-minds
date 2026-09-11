@@ -1,4 +1,4 @@
-import { ClientOnly, createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, Link, createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect } from "react";
 
 import { warmChatChunk } from "@/lib/prefetch";
