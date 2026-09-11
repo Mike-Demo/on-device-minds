@@ -13,7 +13,7 @@ import {
   WaTextarea,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
-import { ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
+import { CPU_MODEL, ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
 
 import { BrandMark } from "./brand-mark";
 import { DevicePanel } from "./device-panel";
@@ -46,7 +46,11 @@ export function OnDeviceChat(): ReactElement {
   };
   const selectRef = useRef<HTMLElement | null>(null);
   const textareaRef = useRef<HTMLElement | null>(null);
-  const model = findModel(chat.modelId);
+  const cpuOnly = chat.runtime === "cpu";
+  const gpuModel = findModel(chat.modelId);
+  const model = cpuOnly
+    ? { label: CPU_MODEL.label, blurb: CPU_MODEL.blurb, approxDownloadMb: CPU_MODEL.approxDownloadMb }
+    : gpuModel;
 
   useEffect(() => {
     const element = selectRef.current;
