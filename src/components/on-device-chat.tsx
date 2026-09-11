@@ -93,7 +93,11 @@ export function OnDeviceChat(): ReactElement {
   return (
     <div className="odc-shell wa-stack wa-gap-2xl">
       <header className="wa-stack wa-gap-s">
-        <h1>An AI model running inside this page</h1>
+        <div className="wa-cluster wa-gap-s wa-align-items-center">
+          <BrandMark className="odc-brand-mark" />
+          <h1>An AI model running inside this page</h1>
+        </div>
+
         <p className="odc-lede">
           Nothing here talks to a server. The model downloads once into this browser and then answers
           on your own hardware — offline, private, and free to run.
