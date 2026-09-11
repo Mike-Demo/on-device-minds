@@ -16,11 +16,32 @@ import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
 import { ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
 
 import { DevicePanel } from "./device-panel";
+import { EntryGate, GATE_STORAGE_KEY } from "./entry-gate";
 import "./on-device-chat.css";
 
 export function OnDeviceChat(): ReactElement {
   const chat = useOnDeviceChat();
+  const [gateCleared, setGateCleared] = useState(false);
+  const [gateChecked, setGateChecked] = useState(false);
   const [draft, setDraft] = useState("");
+
+  useEffect(() => {
+    try {
+      setGateCleared(window.sessionStorage.getItem(GATE_STORAGE_KEY) === "true");
+    } catch {
+      setGateCleared(false);
+    }
+    setGateChecked(true);
+  }, []);
+
+  const clearGate = (): void => {
+    try {
+      window.sessionStorage.setItem(GATE_STORAGE_KEY, "true");
+    } catch {
+      /* private mode: the gate simply reappears next visit */
+    }
+    setGateCleared(true);
+  };
   const selectRef = useRef<HTMLElement | null>(null);
   const textareaRef = useRef<HTMLElement | null>(null);
   const model = findModel(chat.modelId);
