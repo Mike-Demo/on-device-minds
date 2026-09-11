@@ -105,6 +105,9 @@ function Index() {
           <Link to="/faq" className="odc-meta">
             Questions and troubleshooting
           </Link>
+          <Link to="/models/llama-3-in-browser" className="odc-meta">
+            Run Llama 3 in your browser
+          </Link>
           <Link to="/neural-engine" className="odc-meta">
             Why the Neural Engine isn&apos;t used
           </Link>
