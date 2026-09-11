@@ -17,7 +17,11 @@ export const verifyCaptcha = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const secret = process.env["HCAPTCHA_SECRET_KEY"];
     if (!secret) {
-      return { ok: false, error: "Captcha is not configured on the server." };
+      return {
+        ok: false,
+        configured: false,
+        error: "The human check is not set up on the server.",
+      };
     }
 
     try {
@@ -26,11 +30,27 @@ export const verifyCaptcha = createServerFn({ method: "POST" })
         headers: { "content-type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ secret, response: data.token }),
       });
-      const result = (await response.json()) as { success?: boolean };
-      return result.success === true
-        ? { ok: true, error: null }
-        : { ok: false, error: "The human check could not be verified. Please try again." };
+      const result = (await response.json()) as {
+        success?: boolean;
+        "error-codes"?: readonly string[];
+      };
+      if (result.success === true) {
+        return { ok: true, configured: true, error: null };
+      }
+      const codes = result["error-codes"]?.join(", ");
+      return {
+        ok: false,
+        configured: true,
+        error: codes
+          ? `The human check was rejected (${codes}). Please try again.`
+          : "The human check could not be verified. Please try again.",
+      };
     } catch {
-      return { ok: false, error: "The human check could not be reached. Please try again." };
+      return {
+        ok: false,
+        configured: true,
+        error: "The human check could not be reached. Please try again.",
+      };
     }
   });
+

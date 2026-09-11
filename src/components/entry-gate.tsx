@@ -36,11 +36,14 @@ const LEVEL_VARIANT: Record<CheckLevel, "success" | "warning" | "danger" | "neut
   unknown: "neutral",
 };
 
+type CaptchaPhase = "loading" | "ready" | "unavailable";
+
 export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement {
   const model = findModel(modelId);
   const [report, setReport] = useState<PreflightReport | null>(null);
   const [siteKey, setSiteKey] = useState<string | null>(null);
-  const [captchaLoaded, setCaptchaLoaded] = useState(false);
+  const [phase, setPhase] = useState<CaptchaPhase>("loading");
+  const [attempt, setAttempt] = useState(0);
   const [verified, setVerified] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const [captchaError, setCaptchaError] = useState<string | null>(null);
@@ -58,19 +61,36 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
 
   useEffect(() => {
     let active = true;
+    setPhase("loading");
     void (async () => {
       try {
         const result = await getCaptchaSiteKey();
-        if (active) setSiteKey(result.siteKey);
+        if (!active) return;
+        if (result.siteKey) {
+          setSiteKey(result.siteKey);
+          setPhase("ready");
+        } else {
+          setSiteKey(null);
+          setPhase("unavailable");
+          setCaptchaError("The human check isn't available right now.");
+        }
       } catch {
-        if (active) setSiteKey(null);
-      } finally {
-        if (active) setCaptchaLoaded(true);
+        if (!active) return;
+        setSiteKey(null);
+        setPhase("unavailable");
+        setCaptchaError("The human check could not be loaded.");
       }
     })();
     return () => {
       active = false;
     };
+  }, [attempt]);
+
+  const retry = useCallback(() => {
+    setVerified(false);
+    setVerifying(false);
+    setCaptchaError(null);
+    setAttempt((value) => value + 1);
   }, []);
 
   const onVerify = useCallback((token: string) => {
@@ -90,9 +110,19 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
     })();
   }, []);
 
-  const humanCheckDone = verified || (captchaLoaded && siteKey === null);
   const blocked = report?.verdict === "blocked";
-  const canContinue = report !== null && !blocked && humanCheckDone;
+  const canContinue = report !== null && !blocked && verified;
+
+  const blockedReason = (): string | null => {
+    if (report === null) return "Finishing the device check…";
+    if (blocked) return null;
+    if (verified) return null;
+    if (verifying) return "Checking your answer…";
+    if (phase === "loading") return "Loading the human check…";
+    if (phase === "unavailable") return "The human check couldn't load — try again.";
+    return "Tick the human check box first.";
+  };
+
 
   return (
     <div className="odc-shell wa-stack wa-gap-2xl">
@@ -203,17 +233,29 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           </div>
 
           <div className="wa-stack wa-gap-m">
-            {!captchaLoaded ? (
+            {phase === "loading" ? (
               <div className="wa-cluster wa-gap-s wa-align-items-center">
                 <WaSpinner />
                 <span className="odc-meta">Loading…</span>
               </div>
-            ) : siteKey ? (
+            ) : phase === "ready" && siteKey ? (
               <>
                 <p className="odc-meta">
                   Model downloads are large, so this keeps automated traffic away.
                 </p>
-                <HCaptcha siteKey={siteKey} onVerify={onVerify} onExpire={() => setVerified(false)} />
+                <HCaptcha
+                  key={attempt}
+                  siteKey={siteKey}
+                  onVerify={onVerify}
+                  onExpire={() => {
+                    setVerified(false);
+                    setCaptchaError("The check expired — tick the box again.");
+                  }}
+                  onError={() => {
+                    setVerified(false);
+                    setCaptchaError("The check ran into a problem. Please try again.");
+                  }}
+                />
                 {verifying ? <span className="odc-meta">Checking…</span> : null}
                 {captchaError ? <span className="odc-meta">{captchaError}</span> : null}
                 {verified ? (
@@ -221,11 +263,24 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
                     Verified
                   </WaBadge>
                 ) : null}
+                {!verified && !verifying && captchaError ? (
+                  <WaButton appearance="outlined" onClick={retry}>
+                    <WaIcon slot="start" name="rotate-right" />
+                    Try again
+                  </WaButton>
+                ) : null}
               </>
             ) : (
-              <p className="odc-meta">
-                The human check isn&apos;t set up yet, so you can continue without it.
-              </p>
+              <>
+                <p className="odc-meta">
+                  {captchaError ?? "The human check couldn't load."} You&apos;ll need it before
+                  continuing.
+                </p>
+                <WaButton appearance="outlined" onClick={retry}>
+                  <WaIcon slot="start" name="rotate-right" />
+                  Try again
+                </WaButton>
+              </>
             )}
           </div>
         </WaCard>
@@ -236,6 +291,10 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           <WaIcon slot="start" name="arrow-right" />
           Continue to the model
         </WaButton>
+        {!canContinue && !blocked ? (
+          <span className="odc-meta">{blockedReason()}</span>
+        ) : null}
+
         <Link to="/neural-engine" className="odc-meta">
           How this works on Apple hardware
         </Link>

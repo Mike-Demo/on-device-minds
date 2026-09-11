@@ -25,7 +25,7 @@ export function OnDeviceChat(): ReactElement {
   const chat = useOnDeviceChat();
   const [gateCleared, setGateCleared] = useState(false);
   const [gateChecked, setGateChecked] = useState(false);
-  const [draft, setDraft] = useState("");
+  
 
   useEffect(() => {
     try {
@@ -51,33 +51,28 @@ export function OnDeviceChat(): ReactElement {
   useEffect(() => {
     const element = selectRef.current;
     if (!element) return;
-    const handler = (event: Event): void => {
-      const target = event.target as HTMLElement & { value?: string };
-      if (typeof target.value === "string") chat.selectModel(target.value);
+    const handler = (): void => {
+      const value = (element as HTMLElement & { value?: string }).value;
+      if (typeof value === "string" && value.length > 0) chat.selectModel(value);
     };
     element.addEventListener("change", handler);
-    return () => element.removeEventListener("change", handler);
-  }, [chat]);
-
-  useEffect(() => {
-    const element = textareaRef.current;
-    if (!element) return;
-    const handler = (event: Event): void => {
-      const target = event.target as HTMLElement & { value?: string };
-      if (typeof target.value === "string") setDraft(target.value);
+    element.addEventListener("wa-change", handler);
+    return () => {
+      element.removeEventListener("change", handler);
+      element.removeEventListener("wa-change", handler);
     };
-    element.addEventListener("input", handler);
-    return () => element.removeEventListener("input", handler);
-  }, [chat.status]);
+  }, [chat]);
 
   const onSubmit = (event: FormEvent): void => {
     event.preventDefault();
-    const prompt = draft;
-    setDraft("");
     const element = textareaRef.current as (HTMLElement & { value?: string }) | null;
+    const prompt = (element?.value ?? "").trim();
+    if (prompt.length === 0) return;
     if (element) element.value = "";
+
     void chat.send(prompt);
   };
+
 
   if (!gateChecked) {
     return (
@@ -223,7 +218,7 @@ export function OnDeviceChat(): ReactElement {
                 type="submit"
                 variant="brand"
                 loading={chat.generating}
-                disabled={chat.generating || draft.trim().length === 0}
+                disabled={chat.generating}
               >
                 <WaIcon slot="start" name="paper-plane" />
                 Send
