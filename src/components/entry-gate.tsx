@@ -203,26 +203,68 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
         ) : (
           <div className="wa-stack wa-gap-m">
             <ul className="odc-gate-checks wa-stack wa-gap-s">
-              {report.checks.map((check) => (
-                <li key={check.id} className="wa-flank wa-gap-s wa-align-items-start">
-                  <WaIcon name={LEVEL_ICON[check.level]} />
-                  <div className="wa-stack wa-gap-3xs">
-                    <div className="wa-cluster wa-gap-xs wa-align-items-center">
-                      <strong>{check.label}</strong>
-                      <WaBadge variant={LEVEL_VARIANT[check.level]} appearance="outlined" pill>
-                        {check.level === "pass"
-                          ? "Fine"
-                          : check.level === "warn"
-                            ? "Heads up"
-                            : check.level === "fail"
-                              ? "Problem"
-                              : "Unknown"}
-                      </WaBadge>
+              {report.checks.map((check) => {
+                const isDownload = check.id === "connection";
+                const measured = isDownload && speedPhase === "done" && speedMbps !== null;
+                const level: CheckLevel = measured
+                  ? speedMbps < 5
+                    ? "warn"
+                    : "pass"
+                  : check.level;
+                const detail = measured
+                  ? `Measured about ${Math.round(speedMbps)} Mbps — ${describeDownload(
+                      report.downloadMb,
+                      speedMbps,
+                    )} for the ${report.downloadMb} MB download.${
+                      speedMbps < 5
+                        ? " That is slow — switch to Wi-Fi first if you can."
+                        : ""
+                    }`
+                  : check.detail;
+                const canTest =
+                  isDownload && !report.cached && speedPhase !== "running" && !offline;
+
+                return (
+                  <li key={check.id} className="wa-flank wa-gap-s wa-align-items-start">
+                    <WaIcon name={LEVEL_ICON[level]} />
+                    <div className="wa-stack wa-gap-3xs">
+                      <div className="wa-cluster wa-gap-xs wa-align-items-center">
+                        <strong>{check.label}</strong>
+                        <WaBadge variant={LEVEL_VARIANT[level]} appearance="outlined" pill>
+                          {level === "pass"
+                            ? "Fine"
+                            : level === "warn"
+                              ? "Heads up"
+                              : level === "fail"
+                                ? "Problem"
+                                : "Unknown"}
+                        </WaBadge>
+                      </div>
+                      <span className="odc-meta">{detail}</span>
+                      {isDownload && speedPhase === "failed" ? (
+                        <span className="odc-meta">
+                          The speed test couldn&apos;t complete, so the estimate above is the
+                          browser&apos;s own reading.
+                        </span>
+                      ) : null}
+                      {isDownload && speedPhase === "running" ? (
+                        <span className="wa-cluster wa-gap-xs wa-align-items-center">
+                          <WaSpinner />
+                          <span className="odc-meta">Measuring your speed…</span>
+                        </span>
+                      ) : null}
+                      {canTest ? (
+                        <span>
+                          <WaButton appearance="plain" size="small" onClick={runSpeedTest}>
+                            <WaIcon slot="start" name="gauge-high" />
+                            {speedPhase === "idle" ? "Test my speed" : "Test again"}
+                          </WaButton>
+                        </span>
+                      ) : null}
                     </div>
-                    <span className="odc-meta">{check.detail}</span>
-                  </div>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
 
             <WaCallout
