@@ -5,7 +5,7 @@
  */
 
 import { inspectDevice, isCpuRuntimeSupported, type DeviceReport } from "./device";
-import { CPU_MODEL, findModel, type RuntimeKind } from "./models";
+import { CPU_MODEL, CPU_MODEL_URL, findModel, type RuntimeKind } from "./models";
 
 export type CheckLevel = "pass" | "warn" | "fail" | "unknown";
 
@@ -37,6 +37,8 @@ interface NavigatorExtras {
     readonly effectiveType?: string;
     readonly downlink?: number;
     readonly saveData?: boolean;
+    readonly type?: string;
+    readonly rtt?: number;
   };
 }
 
@@ -179,6 +181,98 @@ async function storageCheck(neededMb: number): Promise<PreflightCheck> {
   }
 }
 
+const WIFI_ADVICE = "Switch to Wi-Fi first if you can, to avoid data charges and a slow start.";
+
+function isOffline(): boolean {
+  return typeof navigator !== "undefined" && navigator.onLine === false;
+}
+
+function isCellular(): boolean {
+  const connection = nav()?.connection;
+  if (!connection) return false;
+  if (connection.type === "cellular") return true;
+  const effective = connection.effectiveType;
+  return effective === "slow-2g" || effective === "2g" || effective === "3g";
+}
+
+function networkCheck(neededMb: number, cached: boolean): PreflightCheck {
+  if (isOffline()) {
+    return {
+      id: "network",
+      label: "Network",
+      level: cached ? "pass" : "fail",
+      detail: cached
+        ? "You appear to be offline, but this model is already saved here, so it still works."
+        : "You appear to be offline. The model has to be downloaded once before it can run.",
+    };
+  }
+  const connection = nav()?.connection;
+  const saveData = connection?.saveData === true;
+  if (isCellular() || saveData) {
+    return {
+      id: "network",
+      label: "Network",
+      level: cached ? "pass" : "warn",
+      detail: cached
+        ? "This looks like a mobile data connection, but the model is already saved here — nothing to download."
+        : `This looks like a mobile data connection${
+            saveData ? " with data saver on" : ""
+          }. The model is a one-time download of about ${neededMb} MB. ${WIFI_ADVICE}`,
+    };
+  }
+  if (connection?.type === "wifi" || connection?.type === "ethernet") {
+    return {
+      id: "network",
+      label: "Network",
+      level: "pass",
+      detail: "Looks like Wi-Fi or a wired connection — good for a large one-time download.",
+    };
+  }
+  return {
+    id: "network",
+    label: "Network",
+    level: "unknown",
+    detail: cached
+      ? "This browser does not report the kind of connection you are on. The model is already saved here anyway."
+      : `This browser does not report the kind of connection you are on. Use Wi-Fi for the ${neededMb} MB download if you can.`,
+  };
+}
+
+/** Shared wording so measured and reported speeds read the same. */
+export function describeDownload(neededMb: number, mbps: number): string {
+  const minutes = (neededMb * 8) / (mbps * 60);
+  return minutes < 1 ? "under a minute" : `roughly ${Math.ceil(minutes)} minutes`;
+}
+
+const SPEED_SAMPLE_BYTES = 3 * 1024 * 1024;
+
+/**
+ * Times a small ranged download from the same host the models come from.
+ * Returns null when the test cannot be completed.
+ */
+export async function measureDownloadSpeed(): Promise<{ mbps: number } | null> {
+  if (typeof fetch === "undefined" || isOffline()) return null;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15_000);
+  try {
+    const started = performance.now();
+    const response = await fetch(CPU_MODEL_URL, {
+      cache: "no-store",
+      signal: controller.signal,
+      headers: { Range: `bytes=0-${SPEED_SAMPLE_BYTES - 1}` },
+    });
+    if (!response.ok && response.status !== 206) return null;
+    const bytes = (await response.arrayBuffer()).byteLength;
+    const seconds = (performance.now() - started) / 1000;
+    if (bytes < 256 * 1024 || seconds <= 0) return null;
+    return { mbps: (bytes * 8) / seconds / 1_000_000 };
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function connectionCheck(neededMb: number, cached: boolean): PreflightCheck {
   if (cached) {
     return {
@@ -197,8 +291,7 @@ function connectionCheck(neededMb: number, cached: boolean): PreflightCheck {
       detail: `About ${neededMb} MB to download once. This browser does not report your connection speed.`,
     };
   }
-  const minutes = (neededMb * 8) / (connection.downlink * 60);
-  const rough = minutes < 1 ? "under a minute" : `roughly ${Math.ceil(minutes)} minutes`;
+  const rough = describeDownload(neededMb, connection.downlink);
   const slow = connection.saveData === true || connection.downlink < 5;
   return {
     id: "connection",
@@ -237,6 +330,7 @@ export async function runPreflight(modelId: string): Promise<PreflightReport> {
     processorCheck(),
     memoryCheck(),
     await storageCheck(downloadMb),
+    networkCheck(downloadMb, cached),
     connectionCheck(downloadMb, cached),
   ];
 
