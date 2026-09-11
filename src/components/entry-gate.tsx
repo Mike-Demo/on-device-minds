@@ -44,6 +44,8 @@ const LEVEL_VARIANT: Record<CheckLevel, "success" | "warning" | "danger" | "neut
 
 type CaptchaPhase = "loading" | "ready" | "unavailable";
 
+type SpeedPhase = "idle" | "running" | "done" | "failed";
+
 export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement {
   const model = findModel(modelId);
   const [report, setReport] = useState<PreflightReport | null>(null);
