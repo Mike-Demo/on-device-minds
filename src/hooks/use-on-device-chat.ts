@@ -9,7 +9,7 @@ import {
   type DeviceReport,
 } from "@/lib/webllm/device";
 import type { ChatTurn, GenerationStats, LoadProgress } from "@/lib/webllm/engine";
-import { CPU_MODEL, DEFAULT_MODEL_ID, type RuntimeKind } from "@/lib/webllm/models";
+import { DEFAULT_MODEL_ID, type RuntimeKind } from "@/lib/webllm/models";
 
 export type EngineStatus = "checking" | "unsupported" | "idle" | "loading" | "ready" | "error";
 
@@ -169,7 +169,7 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     device,
     appleSilicon,
     runtime,
-    modelId: runtime === "cpu" ? CPU_MODEL.file : modelId,
+    modelId,
     cached,
     progress,
     turns,
