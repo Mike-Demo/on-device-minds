@@ -4,8 +4,8 @@ import {
   LicensesPage,
   SiteFooter,
   WebAwesomeLoader,
-  baseCredits,
 } from "@/design-system/font-awsome-web-awesome-171158";
+import { baseCredits } from "@/design-system/font-awsome-web-awesome-171158/webawesome/patterns/licenses";
 
 const title = "Open source & credits — On-device AI demo";
 const description =
