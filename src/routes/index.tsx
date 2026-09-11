@@ -78,6 +78,14 @@ function Index() {
             <OnDeviceChat />
           </Suspense>
         </ClientOnly>
+        <div className="odc-shell wa-cluster wa-gap-m">
+          <Link to="/faq" className="odc-meta">
+            Questions and troubleshooting
+          </Link>
+          <Link to="/neural-engine" className="odc-meta">
+            Why the Neural Engine isn&apos;t used
+          </Link>
+        </div>
       </main>
       <SiteFooter />
     </>
