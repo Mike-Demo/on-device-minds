@@ -246,6 +246,8 @@ export function useOnDeviceChat(): OnDeviceChatApi {
     selectModel,
     selectCpuModel,
     loadModel,
+    unloadModel,
+    enableWarmStart,
     send,
     reset,
   };
