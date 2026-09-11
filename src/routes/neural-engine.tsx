@@ -22,6 +22,18 @@ const title = "Why the Neural Engine isn't used — On-device AI demo";
 const description =
   "Browsers can only reach the graphics chip. Here's why the iPad Pro's Neural Engine stays out of reach on the web, and what a native app would change.";
 
+const SITE_URL = "https://ai.mikedemo.dev";
+
+const articleJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Why the Neural Engine isn't used by a web page",
+  description,
+  url: `${SITE_URL}/neural-engine`,
+  author: { "@type": "Person", name: "MikeDemo" },
+  mainEntityOfPage: { "@type": "WebPage", "@id": `${SITE_URL}/neural-engine` },
+};
+
 export const Route = createFileRoute("/neural-engine")({
   staticData: { sitemap: true },
   head: () => ({
@@ -35,6 +47,7 @@ export const Route = createFileRoute("/neural-engine")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/neural-engine" }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify(articleJsonLd) }],
   }),
   component: NeuralEnginePage,
 });
@@ -80,6 +93,9 @@ function NeuralEnginePage(): ReactElement {
             <div className="wa-cluster wa-gap-xs">
               <Link to="/" className="odc-meta">
                 Back to the demo
+              </Link>
+              <Link to="/faq" className="odc-meta">
+                Questions and troubleshooting
               </Link>
             </div>
           </header>
