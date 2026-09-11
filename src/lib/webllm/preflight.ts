@@ -24,6 +24,10 @@ export interface PreflightReport {
   readonly cached: boolean;
   readonly checks: readonly PreflightCheck[];
   readonly verdict: PreflightVerdict;
+  /** Which execution path will actually be used. */
+  readonly runtime: RuntimeKind;
+  /** Download size for the model that path will use. */
+  readonly downloadMb: number;
 }
 
 interface NavigatorExtras {
@@ -46,13 +50,16 @@ function isSmallScreenDevice(): boolean {
   return coarse && Math.min(window.screen.width, window.screen.height) < 700;
 }
 
-function graphicsCheck(device: DeviceReport): PreflightCheck {
+function graphicsCheck(device: DeviceReport, runtime: RuntimeKind): PreflightCheck {
   if (!device.webgpu) {
     return {
       id: "graphics",
       label: "Graphics acceleration",
-      level: "fail",
-      detail: device.reason ?? "This browser cannot use the graphics chip, so no model can run here.",
+      level: runtime === "cpu" ? "warn" : "fail",
+      detail:
+        runtime === "cpu"
+          ? "Not available here, so the model will run on the processor instead. It works, but answers come out much more slowly."
+          : (device.reason ?? "This browser cannot use the graphics chip, so no model can run here."),
     };
   }
   return {
