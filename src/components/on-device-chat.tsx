@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactElement } from "react";
 
 import {
+  WaBadge,
   WaButton,
   WaCallout,
   WaCard,
