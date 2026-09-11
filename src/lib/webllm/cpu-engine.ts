@@ -31,7 +31,11 @@ export async function createCpuEngine(
 ): Promise<Wllama> {
   const model = findCpuModel(modelId);
   const { Wllama } = await import("@wllama/wllama/esm/index.js");
-  const engine = new Wllama({ default: WLLAMA_WASM_URL }, { allowOffline: true });
+  const engine = new Wllama(
+    { default: WLLAMA_WASM_URL },
+    // Several ranged requests finish sooner than one long stream.
+    { allowOffline: true, parallelDownloads: 4 },
+  );
 
   await engine.loadModelFromHF(
     { repo: model.repo, file: model.file },
@@ -42,8 +46,6 @@ export async function createCpuEngine(
       n_batch: 128,
       n_threads: threadCount(),
       n_gpu_layers: 0,
-      // Several ranged requests finish sooner than one long stream.
-      parallelDownloads: 4,
       useCache: true,
       progressCallback: ({ loaded, total }) => {
         const fraction = total > 0 ? loaded / total : 0;
