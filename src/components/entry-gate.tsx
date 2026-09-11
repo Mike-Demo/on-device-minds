@@ -85,6 +85,19 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
 
   useEffect(() => {
     let active = true;
+
+    // The site key is public. When it is available at build time the widget
+    // can start immediately; otherwise fall back to asking the server.
+    const buildTimeKey = import.meta.env["VITE_HCAPTCHA_SITE_KEY"];
+    if (typeof buildTimeKey === "string" && buildTimeKey.length > 0) {
+      setSiteKey(buildTimeKey);
+      setPhase("ready");
+      setCaptchaError(null);
+      return () => {
+        active = false;
+      };
+    }
+
     setPhase("loading");
     void (async () => {
       try {
