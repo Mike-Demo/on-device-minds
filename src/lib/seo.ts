@@ -23,9 +23,11 @@ export const publisherJsonLd = {
   name: "MikeDemo",
   url: SITE_URL,
   sameAs: [
-    "https://www.linkedin.com/in/mikedemo",
-    "https://x.com/mikedemo",
+    "https://www.linkedin.com/in/mikedemopoulos",
+    "https://x.com/mike_demo",
+    "https://www.threads.com/@mdemop",
   ],
+
 } as const;
 
 export const publisherRef = { "@id": PUBLISHER_ID } as const;
