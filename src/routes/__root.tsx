@@ -82,6 +82,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "MikeDemo" },
+      // Browser/OS chrome colour: the manifest and this tag only accept literal
+      // colours, so it mirrors the brand blue used by the app icon.
       { name: "theme-color", content: "#0071ec" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-title", content: "On-device AI" },
