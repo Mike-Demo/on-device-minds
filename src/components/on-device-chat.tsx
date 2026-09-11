@@ -228,7 +228,7 @@ export function OnDeviceChat(): ReactElement {
             </WaBadge>
             <WaButton
               appearance="plain"
-              size="small"
+              size="s"
               onClick={chat.unloadModel}
               disabled={chat.generating}
             >
