@@ -226,6 +226,15 @@ export function OnDeviceChat(): ReactElement {
             <WaBadge variant={cpuOnly ? "warning" : "success"} appearance="outlined" pill>
               {cpuOnly ? "Processor only (slower)" : "Graphics accelerated"}
             </WaBadge>
+            <WaButton
+              appearance="plain"
+              size="small"
+              onClick={chat.unloadModel}
+              disabled={chat.generating}
+            >
+              <WaIcon slot="start" name="arrows-rotate" />
+              Change model
+            </WaButton>
           </div>
 
           <div className="odc-log">
