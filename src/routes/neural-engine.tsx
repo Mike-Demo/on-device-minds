@@ -94,6 +94,9 @@ function NeuralEnginePage(): ReactElement {
               <Link to="/" className="odc-meta">
                 Back to the demo
               </Link>
+              <Link to="/faq" className="odc-meta">
+                Questions and troubleshooting
+              </Link>
             </div>
           </header>
 
