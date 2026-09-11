@@ -119,7 +119,7 @@ export function OnDeviceChat(): ReactElement {
         <WaCard appearance="outlined" with-header>
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="download" />
-            <strong>Choose a model and load it</strong>
+            <h2 className="odc-card-heading">Choose a model and load it</h2>
           </div>
 
           <div className="wa-stack wa-gap-l">
@@ -175,7 +175,7 @@ export function OnDeviceChat(): ReactElement {
         <WaCard appearance="outlined" with-header with-footer>
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="comments" />
-            <strong>{model.label}</strong>
+            <h2 className="odc-card-heading">{model.label}</h2>
           </div>
 
           <div className="odc-log">

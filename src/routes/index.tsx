@@ -16,6 +16,7 @@ const description =
   "A live demo: download a small language model into your browser and chat with it entirely on your own hardware. No server, no API key, nothing sent anywhere.";
 
 export const Route = createFileRoute("/")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title },

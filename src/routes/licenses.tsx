@@ -12,6 +12,7 @@ const description =
   "The open-source libraries, models, and design system behind this browser-based AI demo.";
 
 export const Route = createFileRoute("/licenses")({
+  staticData: { sitemap: true },
   head: () => ({
     meta: [
       { title },

@@ -97,7 +97,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
   return (
     <div className="odc-shell wa-stack wa-gap-2xl">
       <header className="wa-stack wa-gap-s">
-        <h1>Before you start</h1>
+        <h1>On-device AI pre-flight check</h1>
         <p className="odc-lede">
           This page runs a real language model inside your browser. Here is what that means, and
           whether your device is up to it.
@@ -107,7 +107,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
       <WaCard appearance="outlined" with-header>
         <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
           <WaIcon name="circle-info" />
-          <strong>What to expect</strong>
+          <h2 className="odc-card-heading">What to expect</h2>
         </div>
         <ul className="odc-gate-list wa-stack wa-gap-s">
           <li>
@@ -132,7 +132,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
       <WaCard appearance="outlined" with-header>
         <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
           <WaIcon name="stethoscope" />
-          <strong>Checking this device</strong>
+          <h2 className="odc-card-heading">Checking this device</h2>
         </div>
 
         {report === null ? (
@@ -199,7 +199,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
         <WaCard appearance="outlined" with-header>
           <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
             <WaIcon name="shield-halved" />
-            <strong>Quick human check</strong>
+            <h2 className="odc-card-heading">Quick human check</h2>
           </div>
 
           <div className="wa-stack wa-gap-m">
