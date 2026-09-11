@@ -15,7 +15,9 @@ import {
 import { useOnDeviceChat } from "@/hooks/use-on-device-chat";
 import { ON_DEVICE_MODELS, findModel } from "@/lib/webllm/models";
 
+import { BrandMark } from "./brand-mark";
 import { DevicePanel } from "./device-panel";
+
 import { EntryGate, GATE_STORAGE_KEY } from "./entry-gate";
 import "./on-device-chat.css";
 
