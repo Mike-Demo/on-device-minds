@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { ReactElement } from "react";
 
 import { WaBadge, WaCard, WaIcon } from "@/design-system/font-awsome-web-awesome-171158";
@@ -8,13 +9,20 @@ export interface DevicePanelProps {
   readonly device: DeviceReport | null;
   readonly appleSilicon: boolean;
   readonly stats: GenerationStats | null;
+  /** Show the link to the explainer page. Hidden on the explainer page itself. */
+  readonly showExplainerLink?: boolean;
 }
 
 function formatRate(value: number | null): string {
   return value === null ? "—" : `${value.toFixed(1)} tok/s`;
 }
 
-export function DevicePanel({ device, appleSilicon, stats }: DevicePanelProps): ReactElement {
+export function DevicePanel({
+  device,
+  appleSilicon,
+  stats,
+  showExplainerLink = true,
+}: DevicePanelProps): ReactElement {
   return (
     <WaCard appearance="outlined" with-header>
       <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
@@ -54,6 +62,12 @@ export function DevicePanel({ device, appleSilicon, stats }: DevicePanelProps): 
             ? "This looks like an Apple device. Its Neural Engine is only available to native apps through Core ML — no browser can reach it today, so the work runs on the GPU instead."
             : "Browsers can only reach the GPU. Dedicated neural accelerators stay off-limits to web pages until the WebNN standard ships."}
         </p>
+
+        {showExplainerLink ? (
+          <Link to="/neural-engine" className="odc-meta">
+            Why not the Neural Engine?
+          </Link>
+        ) : null}
       </div>
     </WaCard>
   );

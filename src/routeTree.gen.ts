@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LicensesRouteImport } from './routes/licenses'
+import { Route as NeuralEngineRouteImport } from './routes/neural-engine'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,40 @@ const LicensesRoute = LicensesRouteImport.update({
   path: '/licenses',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NeuralEngineRoute = NeuralEngineRouteImport.update({
+  id: '/neural-engine',
+  path: '/neural-engine',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/licenses': typeof LicensesRoute
+  '/neural-engine': typeof NeuralEngineRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/licenses': typeof LicensesRoute
+  '/neural-engine': typeof NeuralEngineRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/licenses': typeof LicensesRoute
+  '/neural-engine': typeof NeuralEngineRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/licenses'
+  fullPaths: '/' | '/licenses' | '/neural-engine'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/licenses'
-  id: '__root__' | '/' | '/licenses'
+  to: '/' | '/licenses' | '/neural-engine'
+  id: '__root__' | '/' | '/licenses' | '/neural-engine'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LicensesRoute: typeof LicensesRoute
+  NeuralEngineRoute: typeof NeuralEngineRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +75,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicensesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/neural-engine': {
+      id: '/neural-engine'
+      path: '/neural-engine'
+      fullPath: '/neural-engine'
+      preLoaderRoute: typeof NeuralEngineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LicensesRoute: LicensesRoute,
+  NeuralEngineRoute: NeuralEngineRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
