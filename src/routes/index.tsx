@@ -15,7 +15,7 @@ const OnDeviceChat = lazy(() =>
 
 const title = "On-device AI — a language model running in your browser";
 const description =
-  "A live demo: download a small language model into your browser and chat with it entirely on your own hardware. No server, no API key, nothing sent anywhere.";
+  "Run a small language model right inside your browser. No server, no API key — the chat happens entirely on your own device.";
 
 export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
