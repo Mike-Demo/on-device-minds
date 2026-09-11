@@ -4,6 +4,8 @@ import type { ReactElement, ReactNode } from "react";
 
 import { BrandMark } from "@/components/brand-mark";
 import { warmChatChunk } from "@/lib/prefetch";
+import { articleJsonLd, breadcrumbJsonLd, pageUrl } from "@/lib/seo";
+
 import { ON_DEVICE_MODELS } from "@/lib/webllm/models";
 
 import {
