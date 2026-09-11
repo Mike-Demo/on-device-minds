@@ -1,5 +1,8 @@
 import { ClientOnly, Link, createFileRoute } from "@tanstack/react-router";
+import { useEffect } from "react";
 import type { ReactElement, ReactNode } from "react";
+
+import { warmChatChunk } from "@/lib/prefetch";
 
 import {
   SiteFooter,
