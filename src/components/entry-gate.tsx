@@ -12,7 +12,13 @@ import {
   WaSpinner,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { getCaptchaSiteKey, verifyCaptcha } from "@/lib/hcaptcha.functions";
-import { runPreflight, type CheckLevel, type PreflightReport } from "@/lib/webllm/preflight";
+import {
+  describeDownload,
+  measureDownloadSpeed,
+  runPreflight,
+  type CheckLevel,
+  type PreflightReport,
+} from "@/lib/webllm/preflight";
 import { findModel } from "@/lib/webllm/models";
 
 export const GATE_STORAGE_KEY = "odc-gate-cleared";
