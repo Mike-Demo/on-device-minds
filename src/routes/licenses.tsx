@@ -6,10 +6,20 @@ import {
   WebAwesomeLoader,
 } from "@/design-system/font-awsome-web-awesome-171158";
 import { baseCredits } from "@/design-system/font-awsome-web-awesome-171158/webawesome/patterns/licenses";
+import { breadcrumbJsonLd, pageUrl, webPageJsonLd } from "@/lib/seo";
 
 const title = "Open source & credits — On-device AI demo";
 const description =
   "The open-source libraries, models, and design system behind this browser-based AI demo.";
+
+const PAGE_URL = pageUrl("/licenses");
+
+const pageJsonLd = webPageJsonLd({ name: title, description, path: "/licenses" });
+
+const crumbsJsonLd = breadcrumbJsonLd([
+  { name: "Home", path: "/" },
+  { name: "Open source & credits", path: "/licenses" },
+]);
 
 export const Route = createFileRoute("/licenses")({
   staticData: { sitemap: true },
@@ -19,12 +29,19 @@ export const Route = createFileRoute("/licenses")({
       { name: "description", content: description },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
+      { property: "og:url", content: PAGE_URL },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: PAGE_URL }],
+    scripts: [
+      { type: "application/ld+json", children: JSON.stringify(pageJsonLd) },
+      { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },
     ],
   }),
   component: Licenses,
 });
+
 
 function Licenses() {
   return (
