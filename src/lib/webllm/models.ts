@@ -37,6 +37,33 @@ export const ON_DEVICE_MODELS: readonly OnDeviceModel[] = [
 
 export const DEFAULT_MODEL_ID: string = ON_DEVICE_MODELS[0]!.id;
 
+/** Which execution path the browser can use. */
+export type RuntimeKind = "gpu" | "cpu" | "none";
+
+export interface CpuModel {
+  /** Hugging Face repository holding the GGUF file. */
+  readonly repo: string;
+  /** File inside that repository. */
+  readonly file: string;
+  readonly label: string;
+  readonly approxDownloadMb: number;
+  readonly blurb: string;
+}
+
+/**
+ * Single model used when the browser has no graphics acceleration.
+ * Runs on the processor through llama.cpp compiled to WebAssembly.
+ */
+export const CPU_MODEL: CpuModel = {
+  repo: "bartowski/Qwen2.5-0.5B-Instruct-GGUF",
+  file: "Qwen2.5-0.5B-Instruct-Q4_K_M.gguf",
+  label: "Qwen2.5 0.5B Instruct (processor only)",
+  approxDownloadMb: 380,
+  blurb: "The only model small enough to answer at a usable speed without graphics acceleration.",
+};
+
+export const CPU_MODEL_URL = `https://huggingface.co/${CPU_MODEL.repo}/resolve/main/${CPU_MODEL.file}`;
+
 export function findModel(id: string): OnDeviceModel {
   return ON_DEVICE_MODELS.find((model) => model.id === id) ?? ON_DEVICE_MODELS[0]!;
 }
