@@ -1,24 +1,55 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { ClientOnly, createFileRoute } from "@tanstack/react-router";
+import { Suspense, lazy } from "react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import {
+  SiteFooter,
+  WaSpinner,
+  WebAwesomeLoader,
+} from "@/design-system/font-awsome-web-awesome-171158";
+
+const OnDeviceChat = lazy(() =>
+  import("@/components/on-device-chat").then((m) => ({ default: m.OnDeviceChat })),
+);
+
+const title = "On-device AI — a language model running in your browser";
+const description =
+  "A live demo: download a small language model into your browser and chat with it entirely on your own hardware. No server, no API key, nothing sent anywhere.";
+
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
+function Loading() {
+  return (
+    <div className="odc-shell wa-cluster wa-gap-s wa-align-items-center">
+      <WaSpinner />
+      <span>Loading…</span>
+    </div>
+  );
+}
+
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <>
+      <WebAwesomeLoader />
+      <main>
+        <ClientOnly fallback={<Loading />}>
+          <Suspense fallback={<Loading />}>
+            <OnDeviceChat />
+          </Suspense>
+        </ClientOnly>
+      </main>
+      <SiteFooter />
+    </>
   );
 }
