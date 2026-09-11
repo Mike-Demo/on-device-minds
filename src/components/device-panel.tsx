@@ -62,6 +62,12 @@ export function DevicePanel({
             ? "This looks like an Apple device. Its Neural Engine is only available to native apps through Core ML — no browser can reach it today, so the work runs on the GPU instead."
             : "Browsers can only reach the GPU. Dedicated neural accelerators stay off-limits to web pages until the WebNN standard ships."}
         </p>
+
+        {showExplainerLink ? (
+          <Link to="/neural-engine" className="odc-meta">
+            Why not the Neural Engine?
+          </Link>
+        ) : null}
       </div>
     </WaCard>
   );
