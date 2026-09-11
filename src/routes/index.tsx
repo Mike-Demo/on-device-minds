@@ -1,6 +1,7 @@
 import { ClientOnly, Link, createFileRoute } from "@tanstack/react-router";
 import { Suspense, lazy, useEffect } from "react";
 
+import { InstallApp } from "@/components/install-app";
 import { warmChatChunk } from "@/lib/prefetch";
 
 import "@/components/on-device-chat.css";
@@ -80,6 +81,11 @@ function Index() {
             <OnDeviceChat />
           </Suspense>
         </ClientOnly>
+        <div className="odc-shell wa-stack wa-gap-s">
+          <ClientOnly fallback={null}>
+            <InstallApp />
+          </ClientOnly>
+        </div>
         <div className="odc-shell wa-cluster wa-gap-m">
           <Link to="/faq" className="odc-meta">
             Questions and troubleshooting
