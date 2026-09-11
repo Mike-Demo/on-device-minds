@@ -5,7 +5,7 @@
  * Browser-only: import it lazily from an event handler or effect, never at
  * module scope of an SSR-evaluated file (it pulls in a .wasm asset URL).
  */
-import type { Wllama } from "@wllama/wllama";
+import type { Wllama } from "@wllama/wllama/esm/index.js";
 import wllamaWasmUrl from "@wllama/wllama/esm/wasm/wllama.wasm?url";
 
 import type { ChatTurn, GenerationStats, LoadProgress } from "./engine";
@@ -14,7 +14,7 @@ import { CPU_MODEL, CPU_MODEL_URL, SYSTEM_PROMPT } from "./models";
 export async function createCpuEngine(
   onProgress: (progress: LoadProgress) => void,
 ): Promise<Wllama> {
-  const { Wllama } = await import("@wllama/wllama");
+  const { Wllama } = await import("@wllama/wllama/esm/index.js");
   const engine = new Wllama({ default: wllamaWasmUrl }, { allowOffline: true });
 
   await engine.loadModelFromHF(
@@ -37,7 +37,7 @@ export async function createCpuEngine(
 
 export async function isCpuModelCached(): Promise<boolean> {
   try {
-    const { CacheManager } = await import("@wllama/wllama");
+    const { CacheManager } = await import("@wllama/wllama/esm/index.js");
     const cache = new CacheManager();
     const name = await cache.getNameFromURL(CPU_MODEL_URL);
     const metadata = await cache.getMetadata(name);

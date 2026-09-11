@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MLCEngineInterface } from "@mlc-ai/web-llm";
-import type { Wllama } from "@wllama/wllama";
+import type { Wllama } from "@wllama/wllama/esm/index.js";
 
 import {
   inspectDevice,
