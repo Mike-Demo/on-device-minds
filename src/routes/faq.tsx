@@ -287,7 +287,6 @@ export const Route = createFileRoute("/faq")({
     ],
   }),
 
-  }),
   component: FaqPage,
 });
 
