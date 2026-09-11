@@ -1,14 +1,20 @@
-# Welcome to your Lovable project
+# On-Device AI
+
+Is it possible to build a web agent that runs a very lightweight model in the browser versus sending it to a server?
+
+If so, is it possible to leverage any architecture on that device, for example, the new iPad Pro's Neural Engine?
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://on-device-minds.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/71e3ccbc-7f85-45cb-81ba-4b8b0e098a3e).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +26,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
