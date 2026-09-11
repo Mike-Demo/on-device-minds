@@ -42,6 +42,8 @@ function Loading() {
 }
 
 function Index() {
+  useEffect(() => warmChatChunk(), []);
+
   return (
     <>
       <WebAwesomeLoader />
