@@ -100,16 +100,29 @@ export function useOnDeviceChat(): OnDeviceChatApi {
   const warmed = useRef(false);
   const [warmStartAllowed, setWarmStartAllowed] = useState(false);
 
-  /** Drop the loaded model so a different one can be chosen. */
+  /** Drop the loaded model — shutting it down first — so a different one can be chosen. */
   const unloadModel = useCallback(() => {
     warmed.current = true; // never auto-restart after a deliberate unload
+    const loaded = engineRef.current;
     engineRef.current = null;
+    if (loaded) {
+      void (async () => {
+        if (loaded.kind === "gpu") {
+          const { disposeEngine } = await import("@/lib/webllm/engine");
+          await disposeEngine(loaded.engine);
+        } else {
+          const { disposeCpuEngine } = await import("@/lib/webllm/cpu-engine");
+          await disposeCpuEngine(loaded.engine);
+        }
+      })();
+    }
     setTurns([]);
     setStats(null);
     setError(null);
     setProgress(null);
     setStatus((current) => (current === "checking" || current === "unsupported" ? current : "idle"));
   }, []);
+
 
   const selectModel = useCallback(
     (next: string) => {
