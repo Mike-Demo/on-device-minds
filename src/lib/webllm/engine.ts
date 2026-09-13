@@ -102,3 +102,26 @@ export async function streamReply(
 
   return stats;
 }
+
+/**
+ * Free the graphics memory and heap held by a loaded engine, then shut down its
+ * worker. Called before another model is loaded so two never coexist.
+ */
+export async function disposeEngine(engine: MLCEngineInterface): Promise<void> {
+  try {
+    engine.interruptGenerate();
+  } catch {
+    /* nothing was generating */
+  }
+  try {
+    await engine.unload();
+  } catch {
+    /* already unloaded */
+  }
+  const worker = (engine as { worker?: { terminate?: () => void } }).worker;
+  try {
+    worker?.terminate?.();
+  } catch {
+    /* worker already gone */
+  }
+}

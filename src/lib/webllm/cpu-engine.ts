@@ -110,3 +110,12 @@ export async function streamCpuReply(
 
   return stats;
 }
+
+/** Release the WebAssembly instance and its worker for a loaded processor model. */
+export async function disposeCpuEngine(engine: Wllama): Promise<void> {
+  try {
+    await engine.exit();
+  } catch {
+    /* already exited */
+  }
+}
