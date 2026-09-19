@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react";
 import type { ReactElement } from "react";
 
 import {
-  HCaptcha,
   WaBadge,
   WaButton,
   WaCallout,
@@ -11,7 +10,6 @@ import {
   WaIcon,
   WaSpinner,
 } from "@/design-system/font-awsome-web-awesome-171158";
-import { getCaptchaSiteKey, verifyCaptcha } from "@/lib/hcaptcha.functions";
 import {
   describeDownload,
   measureDownloadSpeed,
