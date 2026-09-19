@@ -82,11 +82,19 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
     report === null ? "Finishing the device check…" : null;
 
   // React does not reliably clear a boolean attribute it set on a custom
-  // element, so drive the button's own `disabled` property instead.
+  // element, so drive the button's own `disabled` property once the element
+  // has been registered.
   const continueRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    const element = continueRef.current as (HTMLElement & { disabled?: boolean }) | null;
-    if (element) element.disabled = !canContinue;
+    let active = true;
+    void customElements.whenDefined("wa-button").then(() => {
+      if (!active) return;
+      const element = continueRef.current as (HTMLElement & { disabled?: boolean }) | null;
+      if (element) element.disabled = !canContinue;
+    });
+    return () => {
+      active = false;
+    };
   }, [canContinue]);
 
 
