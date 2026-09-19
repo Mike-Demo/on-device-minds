@@ -40,19 +40,11 @@ const LEVEL_VARIANT: Record<CheckLevel, "success" | "warning" | "danger" | "neut
   unknown: "neutral",
 };
 
-type CaptchaPhase = "loading" | "ready" | "unavailable";
-
 type SpeedPhase = "idle" | "running" | "done" | "failed";
 
 export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement {
   const model = findModel(modelId);
   const [report, setReport] = useState<PreflightReport | null>(null);
-  const [siteKey, setSiteKey] = useState<string | null>(null);
-  const [phase, setPhase] = useState<CaptchaPhase>("loading");
-  const [attempt, setAttempt] = useState(0);
-  const [verified, setVerified] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-  const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [speedPhase, setSpeedPhase] = useState<SpeedPhase>("idle");
   const [speedMbps, setSpeedMbps] = useState<number | null>(null);
 
@@ -81,84 +73,14 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
     };
   }, [modelId]);
 
-  useEffect(() => {
-    let active = true;
-
-    // The site key is public. When it is available at build time the widget
-    // can start immediately; otherwise fall back to asking the server.
-    const buildTimeKey = import.meta.env["VITE_HCAPTCHA_SITE_KEY"];
-    if (typeof buildTimeKey === "string" && buildTimeKey.length > 0) {
-      setSiteKey(buildTimeKey);
-      setPhase("ready");
-      setCaptchaError(null);
-      return () => {
-        active = false;
-      };
-    }
-
-    setPhase("loading");
-    void (async () => {
-      try {
-        const result = await getCaptchaSiteKey();
-        if (!active) return;
-        if (result.siteKey) {
-          setSiteKey(result.siteKey);
-          setPhase("ready");
-        } else {
-          setSiteKey(null);
-          setPhase("unavailable");
-          setCaptchaError("The human check isn't available right now.");
-        }
-      } catch {
-        if (!active) return;
-        setSiteKey(null);
-        setPhase("unavailable");
-        setCaptchaError("The human check could not be loaded.");
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [attempt]);
-
-  const retry = useCallback(() => {
-    setVerified(false);
-    setVerifying(false);
-    setCaptchaError(null);
-    setAttempt((value) => value + 1);
-  }, []);
-
-  const onVerify = useCallback((token: string) => {
-    setVerifying(true);
-    setCaptchaError(null);
-    void (async () => {
-      try {
-        const result = await verifyCaptcha({ data: { token } });
-        setVerified(result.ok);
-        setCaptchaError(result.error);
-      } catch {
-        setVerified(false);
-        setCaptchaError("The human check could not be completed. Please try again.");
-      } finally {
-        setVerifying(false);
-      }
-    })();
-  }, []);
-
   const blocked = report?.verdict === "blocked";
   const offline =
     report?.checks.some((check) => check.id === "network" && check.level === "fail") ?? false;
-  const canContinue = report !== null && !blocked && verified;
+  const canContinue = report !== null && !blocked;
 
-  const blockedReason = (): string | null => {
-    if (report === null) return "Finishing the device check…";
-    if (blocked) return null;
-    if (verified) return null;
-    if (verifying) return "Checking your answer…";
-    if (phase === "loading") return "Loading the human check…";
-    if (phase === "unavailable") return "The human check couldn't load — try again.";
-    return "Tick the human check box first.";
-  };
+  const blockedReason = (): string | null =>
+    report === null ? "Finishing the device check…" : null;
+
 
 
   return (
