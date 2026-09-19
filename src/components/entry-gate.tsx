@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 
 import {
-  HCaptcha,
   WaBadge,
   WaButton,
   WaCallout,
@@ -11,7 +10,6 @@ import {
   WaIcon,
   WaSpinner,
 } from "@/design-system/font-awsome-web-awesome-171158";
-import { getCaptchaSiteKey, verifyCaptcha } from "@/lib/hcaptcha.functions";
 import {
   describeDownload,
   measureDownloadSpeed,
@@ -42,19 +40,11 @@ const LEVEL_VARIANT: Record<CheckLevel, "success" | "warning" | "danger" | "neut
   unknown: "neutral",
 };
 
-type CaptchaPhase = "loading" | "ready" | "unavailable";
-
 type SpeedPhase = "idle" | "running" | "done" | "failed";
 
 export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement {
   const model = findModel(modelId);
   const [report, setReport] = useState<PreflightReport | null>(null);
-  const [siteKey, setSiteKey] = useState<string | null>(null);
-  const [phase, setPhase] = useState<CaptchaPhase>("loading");
-  const [attempt, setAttempt] = useState(0);
-  const [verified, setVerified] = useState(false);
-  const [verifying, setVerifying] = useState(false);
-  const [captchaError, setCaptchaError] = useState<string | null>(null);
   const [speedPhase, setSpeedPhase] = useState<SpeedPhase>("idle");
   const [speedMbps, setSpeedMbps] = useState<number | null>(null);
 
@@ -83,84 +73,30 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
     };
   }, [modelId]);
 
-  useEffect(() => {
-    let active = true;
-
-    // The site key is public. When it is available at build time the widget
-    // can start immediately; otherwise fall back to asking the server.
-    const buildTimeKey = import.meta.env["VITE_HCAPTCHA_SITE_KEY"];
-    if (typeof buildTimeKey === "string" && buildTimeKey.length > 0) {
-      setSiteKey(buildTimeKey);
-      setPhase("ready");
-      setCaptchaError(null);
-      return () => {
-        active = false;
-      };
-    }
-
-    setPhase("loading");
-    void (async () => {
-      try {
-        const result = await getCaptchaSiteKey();
-        if (!active) return;
-        if (result.siteKey) {
-          setSiteKey(result.siteKey);
-          setPhase("ready");
-        } else {
-          setSiteKey(null);
-          setPhase("unavailable");
-          setCaptchaError("The human check isn't available right now.");
-        }
-      } catch {
-        if (!active) return;
-        setSiteKey(null);
-        setPhase("unavailable");
-        setCaptchaError("The human check could not be loaded.");
-      }
-    })();
-    return () => {
-      active = false;
-    };
-  }, [attempt]);
-
-  const retry = useCallback(() => {
-    setVerified(false);
-    setVerifying(false);
-    setCaptchaError(null);
-    setAttempt((value) => value + 1);
-  }, []);
-
-  const onVerify = useCallback((token: string) => {
-    setVerifying(true);
-    setCaptchaError(null);
-    void (async () => {
-      try {
-        const result = await verifyCaptcha({ data: { token } });
-        setVerified(result.ok);
-        setCaptchaError(result.error);
-      } catch {
-        setVerified(false);
-        setCaptchaError("The human check could not be completed. Please try again.");
-      } finally {
-        setVerifying(false);
-      }
-    })();
-  }, []);
-
   const blocked = report?.verdict === "blocked";
   const offline =
     report?.checks.some((check) => check.id === "network" && check.level === "fail") ?? false;
-  const canContinue = report !== null && !blocked && verified;
+  const canContinue = report !== null && !blocked;
 
-  const blockedReason = (): string | null => {
-    if (report === null) return "Finishing the device check…";
-    if (blocked) return null;
-    if (verified) return null;
-    if (verifying) return "Checking your answer…";
-    if (phase === "loading") return "Loading the human check…";
-    if (phase === "unavailable") return "The human check couldn't load — try again.";
-    return "Tick the human check box first.";
-  };
+  const blockedReason = (): string | null =>
+    report === null ? "Finishing the device check…" : null;
+
+  // React does not reliably clear a boolean attribute it set on a custom
+  // element, so drive the button's own `disabled` property once the element
+  // has been registered.
+  const continueRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    let active = true;
+    void customElements.whenDefined("wa-button").then(() => {
+      if (!active) return;
+      const element = continueRef.current as (HTMLElement & { disabled?: boolean }) | null;
+      if (element) element.disabled = !canContinue;
+    });
+    return () => {
+      active = false;
+    };
+  }, [canContinue]);
+
 
 
   return (
@@ -314,69 +250,14 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
         )}
       </WaCard>
 
-      {!blocked ? (
-        <WaCard appearance="outlined" with-header>
-          <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
-            <WaIcon name="shield-halved" />
-            <h2 className="odc-card-heading">Quick human check</h2>
-          </div>
-
-          <div className="wa-stack wa-gap-m">
-            {phase === "loading" ? (
-              <div className="wa-cluster wa-gap-s wa-align-items-center">
-                <WaSpinner />
-                <span className="odc-meta">Loading…</span>
-              </div>
-            ) : phase === "ready" && siteKey ? (
-              <>
-                <p className="odc-meta">
-                  Model downloads are large, so this keeps automated traffic away.
-                </p>
-                <HCaptcha
-                  key={attempt}
-                  siteKey={siteKey}
-                  onVerify={onVerify}
-                  onExpire={() => {
-                    setVerified(false);
-                    setCaptchaError("The check expired — tick the box again.");
-                  }}
-                  onError={() => {
-                    setVerified(false);
-                    setCaptchaError("The check ran into a problem. Please try again.");
-                  }}
-                />
-                {verifying ? <span className="odc-meta">Checking…</span> : null}
-                {captchaError ? <span className="odc-meta">{captchaError}</span> : null}
-                {verified ? (
-                  <WaBadge variant="success" appearance="filled" pill>
-                    Verified
-                  </WaBadge>
-                ) : null}
-                {!verified && !verifying && captchaError ? (
-                  <WaButton appearance="outlined" onClick={retry}>
-                    <WaIcon slot="start" name="rotate-right" />
-                    Try again
-                  </WaButton>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <p className="odc-meta">
-                  {captchaError ?? "The human check couldn't load."} You&apos;ll need it before
-                  continuing.
-                </p>
-                <WaButton appearance="outlined" onClick={retry}>
-                  <WaIcon slot="start" name="rotate-right" />
-                  Try again
-                </WaButton>
-              </>
-            )}
-          </div>
-        </WaCard>
-      ) : null}
-
       <div className="wa-cluster wa-gap-s wa-align-items-center">
-        <WaButton variant="brand" size="l" disabled={!canContinue} onClick={onContinue}>
+        <WaButton
+          ref={continueRef}
+          variant="brand"
+          size="l"
+          disabled={!canContinue}
+          onClick={onContinue}
+        >
           <WaIcon slot="start" name="arrow-right" />
           Continue to the model
         </WaButton>
