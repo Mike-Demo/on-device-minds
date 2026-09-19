@@ -243,7 +243,13 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
       </WaCard>
 
       <div className="wa-cluster wa-gap-s wa-align-items-center">
-        <WaButton variant="brand" size="l" disabled={!canContinue} onClick={onContinue}>
+        <WaButton
+          ref={continueRef}
+          variant="brand"
+          size="l"
+          disabled={!canContinue}
+          onClick={onContinue}
+        >
           <WaIcon slot="start" name="arrow-right" />
           Continue to the model
         </WaButton>
