@@ -234,67 +234,6 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
         )}
       </WaCard>
 
-      {!blocked ? (
-        <WaCard appearance="outlined" with-header>
-          <div slot="header" className="wa-cluster wa-gap-xs wa-align-items-center">
-            <WaIcon name="shield-halved" />
-            <h2 className="odc-card-heading">Quick human check</h2>
-          </div>
-
-          <div className="wa-stack wa-gap-m">
-            {phase === "loading" ? (
-              <div className="wa-cluster wa-gap-s wa-align-items-center">
-                <WaSpinner />
-                <span className="odc-meta">Loading…</span>
-              </div>
-            ) : phase === "ready" && siteKey ? (
-              <>
-                <p className="odc-meta">
-                  Model downloads are large, so this keeps automated traffic away.
-                </p>
-                <HCaptcha
-                  key={attempt}
-                  siteKey={siteKey}
-                  onVerify={onVerify}
-                  onExpire={() => {
-                    setVerified(false);
-                    setCaptchaError("The check expired — tick the box again.");
-                  }}
-                  onError={() => {
-                    setVerified(false);
-                    setCaptchaError("The check ran into a problem. Please try again.");
-                  }}
-                />
-                {verifying ? <span className="odc-meta">Checking…</span> : null}
-                {captchaError ? <span className="odc-meta">{captchaError}</span> : null}
-                {verified ? (
-                  <WaBadge variant="success" appearance="filled" pill>
-                    Verified
-                  </WaBadge>
-                ) : null}
-                {!verified && !verifying && captchaError ? (
-                  <WaButton appearance="outlined" onClick={retry}>
-                    <WaIcon slot="start" name="rotate-right" />
-                    Try again
-                  </WaButton>
-                ) : null}
-              </>
-            ) : (
-              <>
-                <p className="odc-meta">
-                  {captchaError ?? "The human check couldn't load."} You&apos;ll need it before
-                  continuing.
-                </p>
-                <WaButton appearance="outlined" onClick={retry}>
-                  <WaIcon slot="start" name="rotate-right" />
-                  Try again
-                </WaButton>
-              </>
-            )}
-          </div>
-        </WaCard>
-      ) : null}
-
       <div className="wa-cluster wa-gap-s wa-align-items-center">
         <WaButton variant="brand" size="l" disabled={!canContinue} onClick={onContinue}>
           <WaIcon slot="start" name="arrow-right" />
