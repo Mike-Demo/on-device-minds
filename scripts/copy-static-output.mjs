@@ -23,7 +23,12 @@ if (source === target) {
 }
 
 if (!(await exists(source))) {
-  console.log("[static] .output/public is missing — nothing to copy");
+  const ready = await exists(resolve(target, "index.html"));
+  console.log(
+    ready
+      ? "[static] dist/client already holds the built site — nothing to copy"
+      : "[static] no build output found at .output/public or dist/client",
+  );
   process.exit(0);
 }
 
