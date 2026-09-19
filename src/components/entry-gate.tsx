@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ReactElement } from "react";
 
 import {
@@ -80,6 +80,14 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
 
   const blockedReason = (): string | null =>
     report === null ? "Finishing the device check…" : null;
+
+  // React does not reliably clear a boolean attribute it set on a custom
+  // element, so drive the button's own `disabled` property instead.
+  const continueRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const element = continueRef.current as (HTMLElement & { disabled?: boolean }) | null;
+    if (element) element.disabled = !canContinue;
+  }, [canContinue]);
 
 
 
