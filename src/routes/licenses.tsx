@@ -51,7 +51,26 @@ function Licenses() {
         <LicensesPage
           lede="This demo runs a language model entirely in your browser. Everything it depends on is credited below."
           groups={[
-            { title: "Open source libraries", entries: baseCredits },
+            {
+              title: "Open source libraries",
+              entries: [
+                ...baseCredits,
+                {
+                  name: "Radix UI",
+                  author: "WorkOS",
+                  license: "MIT",
+                  url: "https://github.com/radix-ui/primitives/blob/main/LICENSE",
+                  note: "Unstyled UI primitives.",
+                },
+                {
+                  name: "Lucide",
+                  author: "Lucide contributors",
+                  license: "ISC",
+                  url: "https://github.com/lucide-icons/lucide/blob/main/LICENSE",
+                  note: "Icon components.",
+                },
+              ],
+            },
             {
               title: "On-device inference",
               entries: [
