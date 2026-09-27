@@ -102,11 +102,11 @@ export const Route = createRootRoute({
         httpEquiv: "Content-Security-Policy",
         content:
           "default-src 'self'; " +
-          "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.hcaptcha.com; " +
+          "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.hcaptcha.com https://umami-lite.view.fast; " +
           "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
           "img-src 'self' data: blob: https://*.hcaptcha.com https://app.aikido.dev; " +
           "font-src 'self' data: https://cdn.jsdelivr.net; " +
-          "connect-src 'self' https://cdn.jsdelivr.net https://huggingface.co https://*.hf.co https://hcaptcha.com https://*.hcaptcha.com; " +
+          "connect-src 'self' https://cdn.jsdelivr.net https://huggingface.co https://*.hf.co https://hcaptcha.com https://*.hcaptcha.com https://umami-lite.view.fast; " +
           "frame-src https://*.hcaptcha.com; " +
           "worker-src 'self' blob:; " +
           "object-src 'none'; " +
@@ -161,6 +161,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" className={WEB_AWESOME_HTML_CLASSES}>
       <head>
         <HeadContent />
+        <script defer src="https://umami-lite.view.fast/tracker.js" data-website-id="ad06da63-08de-4210-baa1-100b33578d61"></script>
       </head>
       <body>
         {children}
