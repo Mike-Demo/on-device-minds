@@ -91,6 +91,16 @@
   padding: 0;
 }
 
+/* The device check runs async; the loading state is a single spinner row
+   while the loaded state is six check rows plus a verdict callout. Reserve
+   roughly the loaded body's height so the card doesn't grow when results
+   arrive (CLS 0.079 + 0.016 in the audit). Measured loaded card: ~630px;
+   minus header and card padding leaves ~34rem of body. A floor only — taller
+   content on narrow screens still grows naturally. */
+.odc-gate-loading {
+  min-block-size: 34rem;
+}
+
 .odc-gate-list li {
   color: var(--wa-color-text-normal);
 }

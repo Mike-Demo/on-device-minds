@@ -147,7 +147,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
         </div>
 
         {report === null ? (
-          <div className="wa-cluster wa-gap-s wa-align-items-center">
+          <div className="odc-gate-loading wa-cluster wa-gap-s wa-align-items-center">
             <WaSpinner />
             <span className="odc-meta">Running a quick check…</span>
           </div>
