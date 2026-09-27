@@ -72,10 +72,10 @@ function DiagnosticsPage(): ReactElement {
               <Link to="/" className="odc-meta">
                 Back to the chat
               </Link>
-              <Link to="/faq" className="odc-meta">
+              <Link to="/faq/" className="odc-meta">
                 Questions and troubleshooting
               </Link>
-              <Link to="/models/compare" className="odc-meta">
+              <Link to="/models/compare/" className="odc-meta">
                 Compare the models
               </Link>
             </div>

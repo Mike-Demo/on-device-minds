@@ -12,9 +12,13 @@ export const SITE_NAME = "On-device AI";
 export const PUBLISHER_ID = `${SITE_URL}/#publisher`;
 export const WEBSITE_ID = `${SITE_URL}/#website`;
 
-/** Absolute URL for a route path such as `/faq`. */
+/** Absolute URL for a route path such as `/faq`.
+ *
+ * Canonical URLs site-wide use a trailing slash: the static host 308s
+ * `/faq` to `/faq/`, so every canonical, JSON-LD URL, and breadcrumb
+ * must point at the slash form to avoid a redirect hop. */
 export const pageUrl = (path: string): string =>
-  path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}`;
+  path === "/" ? `${SITE_URL}/` : `${SITE_URL}${path}/`;
 
 export const publisherJsonLd = {
   "@context": "https://schema.org",

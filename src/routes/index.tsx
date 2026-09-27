@@ -129,19 +129,19 @@ function Index() {
           </ClientOnly>
         </div>
         <div className="odc-shell wa-cluster wa-gap-m">
-          <Link to="/faq" className="odc-meta">
+          <Link to="/faq/" className="odc-meta">
             Questions and troubleshooting
           </Link>
-          <Link to="/models/llama-3-in-browser" className="odc-meta">
+          <Link to="/models/llama-3-in-browser/" className="odc-meta">
             Run Llama 3 in your browser
           </Link>
-          <Link to="/models/compare" className="odc-meta">
+          <Link to="/models/compare/" className="odc-meta">
             Compare the models
           </Link>
-          <Link to="/diagnostics" className="odc-meta">
+          <Link to="/diagnostics/" className="odc-meta">
             Check this device
           </Link>
-          <Link to="/neural-engine" className="odc-meta">
+          <Link to="/neural-engine/" className="odc-meta">
             Why the Neural Engine isn&apos;t used
           </Link>
         </div>

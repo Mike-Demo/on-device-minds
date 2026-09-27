@@ -64,7 +64,7 @@ export function DevicePanel({
         </p>
 
         {showExplainerLink ? (
-          <Link to="/neural-engine" className="odc-meta">
+          <Link to="/neural-engine/" className="odc-meta">
             Why not the Neural Engine?
           </Link>
         ) : null}

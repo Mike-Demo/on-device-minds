@@ -53,7 +53,7 @@ export const DEFAULT_SOCIAL_LINKS: readonly SiteFooterSocialLink[] = [
 export interface SiteFooterProps {
   /** Attribution line. Defaults to "Made by MikeDemo". */
   readonly madeBy?: string;
-  /** Path of the open-source license page. Defaults to "/licenses". */
+  /** Path of the open-source license page. Defaults to "/licenses/". */
   readonly licensesHref?: string;
   /** Social links. Defaults to DEFAULT_SOCIAL_LINKS. */
   readonly socialLinks?: readonly SiteFooterSocialLink[];
@@ -74,7 +74,7 @@ export interface SiteFooterProps {
  */
 export function SiteFooter({
   madeBy = "Made by MikeDemo",
-  licensesHref = "/licenses",
+  licensesHref = "/licenses/",
   socialLinks = DEFAULT_SOCIAL_LINKS,
   year,
   className,

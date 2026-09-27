@@ -106,10 +106,10 @@ function LlamaInBrowserPage(): ReactElement {
               <Link to="/" className="odc-meta">
                 Try it in the chat
               </Link>
-              <Link to="/faq" className="odc-meta">
+              <Link to="/faq/" className="odc-meta">
                 Questions and troubleshooting
               </Link>
-              <Link to="/neural-engine" className="odc-meta">
+              <Link to="/neural-engine/" className="odc-meta">
                 Why the Neural Engine isn&apos;t used
               </Link>
             </div>

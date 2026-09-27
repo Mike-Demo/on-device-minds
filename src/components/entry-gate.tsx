@@ -131,7 +131,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           ) : null}
           <li>
             Web pages can only use the graphics chip. Apple&apos;s Neural Engine stays out of reach —{" "}
-            <Link to="/neural-engine">why that is</Link>.
+            <Link to="/neural-engine/">why that is</Link>.
           </li>
           <li>
             These are very small models. They are quick and private, but far less capable than a
@@ -265,7 +265,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
           <span className="odc-meta">{blockedReason()}</span>
         ) : null}
 
-        <Link to="/neural-engine" className="odc-meta">
+        <Link to="/neural-engine/" className="odc-meta">
           How this works on Apple hardware
         </Link>
       </div>
@@ -282,7 +282,7 @@ export function EntryGate({ modelId, onContinue }: EntryGateProps): ReactElement
             your exact device — including the hidden settings in Safari on iPhone and iPad, and the
             hardware acceleration switch in Chrome and Edge.
           </p>
-          <Link to="/diagnostics" className="odc-meta">
+          <Link to="/diagnostics/" className="odc-meta">
             Open the device diagnostics
           </Link>
         </div>

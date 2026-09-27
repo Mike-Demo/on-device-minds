@@ -309,13 +309,13 @@ function FaqPage(): ReactElement {
               <Link to="/" className="odc-meta">
                 Back to the demo
               </Link>
-              <Link to="/neural-engine" className="odc-meta">
+              <Link to="/neural-engine/" className="odc-meta">
                 Why the Neural Engine isn&apos;t used
               </Link>
-              <Link to="/diagnostics" className="odc-meta">
+              <Link to="/diagnostics/" className="odc-meta">
                 Check this device and get tips
               </Link>
-              <Link to="/models/compare" className="odc-meta">
+              <Link to="/models/compare/" className="odc-meta">
                 Compare the models
               </Link>
             </div>
@@ -335,7 +335,7 @@ function FaqPage(): ReactElement {
                         <p key={paragraph}>{paragraph}</p>
                       ))}
                       {entry.question.includes("Neural Engine") ? (
-                        <Link to="/neural-engine" className="odc-meta">
+                        <Link to="/neural-engine/" className="odc-meta">
                           Read the full explanation
                         </Link>
                       ) : null}

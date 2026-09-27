@@ -137,10 +137,10 @@ function CompareModelsPage(): ReactElement {
               <Link to="/" className="odc-meta">
                 Try them in the chat
               </Link>
-              <Link to="/diagnostics" className="odc-meta">
+              <Link to="/diagnostics/" className="odc-meta">
                 Check what this device can run
               </Link>
-              <Link to="/faq" className="odc-meta">
+              <Link to="/faq/" className="odc-meta">
                 Questions and troubleshooting
               </Link>
             </div>
@@ -228,17 +228,17 @@ function CompareModelsPage(): ReactElement {
                 />
               ))}
               <p className="odc-meta">
-                <Link to="/diagnostics">The diagnostics page</Link> tells you which path your device
+                <Link to="/diagnostics/">The diagnostics page</Link> tells you which path your device
                 will take, and what you can change.
               </p>
             </div>
           </WaCard>
 
           <div className="wa-cluster wa-gap-m">
-            <Link to="/models/llama-3-in-browser" className="odc-meta">
+            <Link to="/models/llama-3-in-browser/" className="odc-meta">
               More about Llama 3 in the browser
             </Link>
-            <Link to="/neural-engine" className="odc-meta">
+            <Link to="/neural-engine/" className="odc-meta">
               Why the Neural Engine isn&apos;t used
             </Link>
           </div>
