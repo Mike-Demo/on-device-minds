@@ -49,6 +49,18 @@
   outline-offset: var(--wa-focus-ring-offset);
 }
 
+/* Reserve the icon slot before the CDN SVG arrives: <wa-icon> fetches its
+   Font Awesome SVG from jsDelivr at runtime, and an un-sized custom element
+   collapses to zero width, shifting the footer when the graphic lands (CLS).
+   1.25em x 1em matches wa-icon's default "fixed" canvas exactly, so the
+   reserved box equals the final rendered size. */
+.wa-site-footer wa-icon {
+  display: inline-block;
+  inline-size: 1.25em;
+  block-size: 1em;
+  flex: none;
+}
+
 .wa-site-footer-meta {
   display: flex;
   flex-wrap: wrap;
