@@ -1,0 +1,12 @@
+version = "0.5"
+last_updated = 2026-09-27
+
+[org]
+disclosures = [
+    { doc_type = "web-page", url = "https://ai.mikedemo.dev/licenses", domain = "ai.mikedemo.dev", title = "Carbon disclosure for On-Device AI" },
+]
+
+[upstream]
+services = [
+    { domain = "www.spacefast.com", service_type = "shared-hosting" },
+]
