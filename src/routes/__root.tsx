@@ -99,7 +99,7 @@ export const Route = createRootRoute({
       // Deliberately omitted: *.supabase.co — zero references anywhere in the
       // repo, the live <head>, or the production bundle.
       {
-        "http-equiv": "Content-Security-Policy",
+        httpEquiv: "Content-Security-Policy",
         content:
           "default-src 'self'; " +
           "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.hcaptcha.com; " +
