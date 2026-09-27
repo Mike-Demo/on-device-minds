@@ -52,6 +52,18 @@ function Licenses() {
           lede="This demo runs a language model entirely in your browser. Everything it depends on is credited below."
           groups={[
             {
+              title: "Open source",
+              entries: [
+                {
+                  name: "On-device AI demo (this site)",
+                  author: "MikeDemo",
+                  license: "No license declared",
+                  url: "https://github.com/Mike-Demo/on-device-minds",
+                  note: "This site's source code is on GitHub.",
+                },
+              ],
+            },
+            {
               title: "Open source libraries",
               entries: [
                 ...baseCredits,
