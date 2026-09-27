@@ -22,12 +22,14 @@ export const publisherJsonLd = {
   "@id": PUBLISHER_ID,
   name: "MikeDemo",
   url: SITE_URL,
+  description:
+    "MikeDemo builds open, privacy-first AI experiments for the web — including On-device AI, a web app that runs small language models entirely in the visitor's browser with no server, API key, or account.",
   sameAs: [
+    "https://github.com/Mike-Demo",
     "https://www.linkedin.com/in/mikedemopoulos",
     "https://x.com/mike_demo",
     "https://www.threads.com/@mdemop",
   ],
-
 } as const;
 
 export const publisherRef = { "@id": PUBLISHER_ID } as const;
