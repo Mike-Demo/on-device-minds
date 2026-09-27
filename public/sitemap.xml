@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://ai.mikedemo.dev/</loc></url>
-  <url><loc>https://ai.mikedemo.dev/faq/</loc></url>
-  <url><loc>https://ai.mikedemo.dev/models/llama-3-in-browser/</loc></url>
-  <url><loc>https://ai.mikedemo.dev/models/compare/</loc></url>
-  <url><loc>https://ai.mikedemo.dev/diagnostics/</loc></url>
-  <url><loc>https://ai.mikedemo.dev/neural-engine/</loc></url>
-  <url><loc>https://ai.mikedemo.dev/licenses/</loc></url>
+  <url><loc>https://ai.mikedemo.dev/</loc><lastmod>2026-09-27</lastmod></url>
+  <url><loc>https://ai.mikedemo.dev/faq/</loc><lastmod>2026-09-27</lastmod></url>
+  <url><loc>https://ai.mikedemo.dev/models/llama-3-in-browser/</loc><lastmod>2026-09-27</lastmod></url>
+  <url><loc>https://ai.mikedemo.dev/models/compare/</loc><lastmod>2026-09-27</lastmod></url>
+  <url><loc>https://ai.mikedemo.dev/diagnostics/</loc><lastmod>2026-09-27</lastmod></url>
+  <url><loc>https://ai.mikedemo.dev/neural-engine/</loc><lastmod>2026-09-27</lastmod></url>
+  <url><loc>https://ai.mikedemo.dev/licenses/</loc><lastmod>2026-09-27</lastmod></url>
 </urlset>
