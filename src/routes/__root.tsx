@@ -81,6 +81,38 @@ export const Route = createRootRoute({
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { name: "author", content: "MikeDemo" },
+      // Content Security Policy. Third-party inventory (verified 2026-09-26
+      // against repo source, the live <head>, and the production JS bundle):
+      // - cdn.jsdelivr.net: Web Awesome stylesheet preconnect; <wa-icon>
+      //   fetches Font Awesome SVGs from /npm/@fortawesome/fontawesome-free@*/svgs/
+      // - js.hcaptcha.com + *.hcaptcha.com: human-check widget (the head
+      //   preconnects these hosts; the widget script is not loaded yet)
+      // - huggingface.co + *.hf.co: model weight downloads (redirect to
+      //   cdn-lfs-*.hf.co at runtime)
+      // - app.aikido.dev: security-audit badge image on /licenses/
+      // - worker-src blob:: the WebLLM engine worker
+      // Trade-off: 'unsafe-inline' on scripts/styles is required because
+      // TanStack Start SSR injects inline bootstrap scripts and the app ships
+      // an inline preferences bootstrap. Removing it would need nonces or
+      // hashes — a bigger change. The policy still blocks off-host script
+      // injection, object embeds, and framing by other origins.
+      // Deliberately omitted: *.supabase.co — zero references anywhere in the
+      // repo, the live <head>, or the production bundle.
+      {
+        "http-equiv": "Content-Security-Policy",
+        content:
+          "default-src 'self'; " +
+          "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.hcaptcha.com; " +
+          "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
+          "img-src 'self' data: blob: https://*.hcaptcha.com https://app.aikido.dev; " +
+          "font-src 'self' data: https://cdn.jsdelivr.net; " +
+          "connect-src 'self' https://cdn.jsdelivr.net https://huggingface.co https://*.hf.co https://hcaptcha.com https://*.hcaptcha.com; " +
+          "frame-src https://*.hcaptcha.com; " +
+          "worker-src 'self' blob:; " +
+          "object-src 'none'; " +
+          "base-uri 'self'; " +
+          "form-action 'self'",
+      },
       // Browser/OS chrome colour: the manifest and this tag only accept literal
       // colours, so it mirrors the brand blue used by the app icon.
       { name: "theme-color", content: "#0071ec" },
