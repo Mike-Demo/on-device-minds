@@ -2,6 +2,10 @@
 
 > Run a small language model right inside your browser. No server, no API key, no account — the chat happens entirely on your own device, using its graphics chip (or the processor as a fallback).
 
+## When to use this
+
+Reach for On-device AI when the job is private brainstorming or drafting (nothing typed ever leaves the device), trying local AI for the first time (no install, no account, no key — the model downloads once, then works offline), checking whether a device can run local models well (pre-flight check and diagnostics page), or comparing small models (Qwen2.5, Llama 3.2, Phi-4 mini, SmolLM2) by size and speed. Do not reach for it when the job needs a strong model, factual accuracy, an API, or agent tool-calling — these are very small models with no programmatic interface.
+
 ## What this site is
 
 On-device AI (https://ai.mikedemo.dev/) is a web app by MikeDemo that downloads a small open language model once — from Hugging Face — keeps it in the browser, and runs chat inference locally with WebGPU (via WebLLM) or, where the graphics chip is unavailable, on the CPU (via wllama). Nothing typed ever leaves the device. There is a pre-flight device check before the chat, a model comparison page, a diagnostics page, an explainer on Apple hardware, and a FAQ. Reading the site needs no account and no key.

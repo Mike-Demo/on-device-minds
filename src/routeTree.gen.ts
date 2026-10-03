@@ -10,16 +10,35 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DevelopersRouteImport } from './routes/developers'
 import { Route as DiagnosticsRouteImport } from './routes/diagnostics'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as LicensesRouteImport } from './routes/licenses'
 import { Route as NeuralEngineRouteImport } from './routes/neural-engine'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ModelsCompareRouteImport } from './routes/models.compare'
 import { Route as ModelsLlama3InBrowserRouteImport } from './routes/models.llama-3-in-browser'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevelopersRoute = DevelopersRouteImport.update({
+  id: '/developers',
+  path: '/developers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DiagnosticsRoute = DiagnosticsRouteImport.update({
@@ -42,6 +61,11 @@ const NeuralEngineRoute = NeuralEngineRouteImport.update({
   path: '/neural-engine',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ModelsCompareRoute = ModelsCompareRouteImport.update({
   id: '/models/compare',
   path: '/models/compare',
@@ -55,29 +79,41 @@ const ModelsLlama3InBrowserRoute = ModelsLlama3InBrowserRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/developers': typeof DevelopersRoute
   '/diagnostics': typeof DiagnosticsRoute
   '/faq': typeof FaqRoute
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
+  '/privacy': typeof PrivacyRoute
   '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/developers': typeof DevelopersRoute
   '/diagnostics': typeof DiagnosticsRoute
   '/faq': typeof FaqRoute
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
+  '/privacy': typeof PrivacyRoute
   '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/contact': typeof ContactRoute
+  '/developers': typeof DevelopersRoute
   '/diagnostics': typeof DiagnosticsRoute
   '/faq': typeof FaqRoute
   '/licenses': typeof LicensesRoute
   '/neural-engine': typeof NeuralEngineRoute
+  '/privacy': typeof PrivacyRoute
   '/models/compare': typeof ModelsCompareRoute
   '/models/llama-3-in-browser': typeof ModelsLlama3InBrowserRoute
 }
@@ -85,38 +121,54 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/contact'
+    | '/developers'
     | '/diagnostics'
     | '/faq'
     | '/licenses'
     | '/neural-engine'
+    | '/privacy'
     | '/models/compare'
     | '/models/llama-3-in-browser'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/contact'
+    | '/developers'
     | '/diagnostics'
     | '/faq'
     | '/licenses'
     | '/neural-engine'
+    | '/privacy'
     | '/models/compare'
     | '/models/llama-3-in-browser'
   id:
     | '__root__'
     | '/'
+    | '/about'
+    | '/contact'
+    | '/developers'
     | '/diagnostics'
     | '/faq'
     | '/licenses'
     | '/neural-engine'
+    | '/privacy'
     | '/models/compare'
     | '/models/llama-3-in-browser'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  ContactRoute: typeof ContactRoute
+  DevelopersRoute: typeof DevelopersRoute
   DiagnosticsRoute: typeof DiagnosticsRoute
   FaqRoute: typeof FaqRoute
   LicensesRoute: typeof LicensesRoute
   NeuralEngineRoute: typeof NeuralEngineRoute
+  PrivacyRoute: typeof PrivacyRoute
   ModelsCompareRoute: typeof ModelsCompareRoute
   ModelsLlama3InBrowserRoute: typeof ModelsLlama3InBrowserRoute
 }
@@ -128,6 +180,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/developers': {
+      id: '/developers'
+      path: '/developers'
+      fullPath: '/developers'
+      preLoaderRoute: typeof DevelopersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/diagnostics': {
@@ -158,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NeuralEngineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/models/compare': {
       id: '/models/compare'
       path: '/models/compare'
@@ -177,10 +257,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  ContactRoute: ContactRoute,
+  DevelopersRoute: DevelopersRoute,
   DiagnosticsRoute: DiagnosticsRoute,
   FaqRoute: FaqRoute,
   LicensesRoute: LicensesRoute,
   NeuralEngineRoute: NeuralEngineRoute,
+  PrivacyRoute: PrivacyRoute,
   ModelsCompareRoute: ModelsCompareRoute,
   ModelsLlama3InBrowserRoute: ModelsLlama3InBrowserRoute,
 }

@@ -280,7 +280,10 @@ export const Route = createFileRoute("/faq")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: FAQ_URL }],
+    links: [
+      { rel: "canonical", href: FAQ_URL },
+      { rel: "alternate", type: "text/markdown", href: "https://ai.mikedemo.dev/faq.md" },
+    ],
     scripts: [
       { type: "application/ld+json", children: JSON.stringify(faqJsonLd) },
       { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },

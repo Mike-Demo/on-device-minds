@@ -33,7 +33,10 @@ export const Route = createFileRoute("/licenses")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [
+      { rel: "canonical", href: PAGE_URL },
+      { rel: "alternate", type: "text/markdown", href: "https://ai.mikedemo.dev/licenses.md" },
+    ],
     scripts: [
       { type: "application/ld+json", children: JSON.stringify(pageJsonLd) },
       { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },

@@ -92,7 +92,10 @@ export const Route = createFileRoute("/models/compare")({
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [
+      { rel: "canonical", href: PAGE_URL },
+      { rel: "alternate", type: "text/markdown", href: "https://ai.mikedemo.dev/models/compare.md" },
+    ],
     scripts: [
       { type: "application/ld+json", children: JSON.stringify(jsonLd) },
       { type: "application/ld+json", children: JSON.stringify(crumbsJsonLd) },

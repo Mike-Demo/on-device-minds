@@ -121,6 +121,9 @@ export const Route = createRootRoute({
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "twitter:card", content: "summary_large_image" },
+      // Shared social preview image (real file, shipped in public/).
+      { property: "og:image", content: "https://ai.mikedemo.dev/pwa-512.png" },
+      { property: "og:type", content: "website" },
       {
         name: "google-site-verification",
         content: "RHlwBdxnagu8yjEC1UQ3cV-WcIJ17lGECi8uJYHO6P4",

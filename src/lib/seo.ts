@@ -34,6 +34,11 @@ export const publisherJsonLd = {
     "https://x.com/mike_demo",
     "https://www.threads.com/@mdemop",
   ],
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "hey.demo@mikedemo.email",
+    contactType: "customer support",
+  },
 } as const;
 
 export const publisherRef = { "@id": PUBLISHER_ID } as const;

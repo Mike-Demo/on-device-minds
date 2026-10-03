@@ -75,9 +75,13 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: description },
       { property: "og:url", content: HOME_URL },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "https://ai.mikedemo.dev/pwa-512.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: HOME_URL }],
+    links: [
+      { rel: "canonical", href: HOME_URL },
+      { rel: "alternate", type: "text/markdown", href: "https://ai.mikedemo.dev/index.md" },
+    ],
     scripts: [
       { type: "application/ld+json", children: JSON.stringify(publisherJsonLd) },
       { type: "application/ld+json", children: JSON.stringify(siteJsonLd) },
@@ -144,7 +148,57 @@ function Index() {
           <Link to="/neural-engine/" className="odc-meta">
             Why the Neural Engine isn&apos;t used
           </Link>
+          <Link to="/about" className="odc-meta">
+            About this demo
+          </Link>
+          <Link to="/developers" className="odc-meta">
+            For developers
+          </Link>
+          <Link to="/privacy" className="odc-meta">
+            Privacy
+          </Link>
+          <Link to="/contact" className="odc-meta">
+            Contact
+          </Link>
         </div>
+
+        {/* Server-rendered explainer so crawlers and agents see real
+            content in the raw HTML, before the browser-only chat loads. */}
+        <section className="odc-shell wa-stack wa-gap-s" aria-labelledby="how-it-works">
+          <h2 id="how-it-works">How the on-device demo works</h2>
+          <p>
+            A language model is just a very large file of numbers. This
+            page downloads one such file — between roughly 270 MB and
+            2.3 GB depending on the model you pick — keeps it in the
+            browser&apos;s own storage, and then does the math on your
+            hardware. With WebGPU the work runs on your graphics chip;
+            without it, a WebAssembly build of llama.cpp runs on the
+            processor instead. Either way, your words never leave the
+            machine.
+          </p>
+          <p>
+            Before any download, the page runs a pre-flight check: it
+            looks for graphics acceleration, estimates available memory
+            and storage, notes your network type, and can run a small
+            speed test so you don&apos;t start a two-gigabyte download
+            over a cellular connection by accident. Once the model is
+            cached, the demo works offline — the chat is a conversation
+            between you and a file on your own disk.
+          </p>
+          <p>
+            The trade-off is capability. These are small models
+            (SmolLM2 360M, Qwen2.5 0.5B and 1.5B, Llama 3.2 1B, Phi-4
+            mini): they answer quickly and privately, but they know less
+            and hallucinate more than the giant models running in data
+            centers. If you want to see how they differ, the{" "}
+            <Link to="/models/compare">model comparison</Link> lays out
+            size and speed; the{" "}
+            <Link to="/diagnostics">diagnostics page</Link> tells you
+            what your device can handle; and the{" "}
+            <Link to="/faq">FAQ</Link> answers the privacy and
+            troubleshooting questions in full.
+          </p>
+        </section>
       </main>
       <SiteFooter />
     </>

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "chat-on-device",
+      "description": "Walk a user through chatting with the on-device model: pre-flight device check, model choice, one-time download, then offline-capable chat on their own hardware.",
+      "url": "https://ai.mikedemo.dev/skills/chat-on-device/SKILL.md",
+      "type": "skill-md",
+      "digest": "sha256:d311c43be1b65b6f57b7bc09721c509f2285682fe626f2e1c99d8f44516726c7"
+    },
+    {
+      "name": "compare-models",
+      "description": "Compare the available models (SmolLM2 360M, Qwen2.5 0.5B/1.5B, Llama 3.2 1B, Phi-4 mini) by download size and speed trade-offs, and recommend one for a user's device.",
+      "url": "https://ai.mikedemo.dev/skills/compare-models/SKILL.md",
+      "type": "skill-md",
+      "digest": "sha256:27e9507075be7d70a2c3611b48dcb9f38f11a4960483160a14fa15735c249004"
+    },
+    {
+      "name": "diagnose-device",
+      "description": "Use the diagnostics page to name the visitor's browser, OS, and graphics chip, and give per-device performance tips for local inference.",
+      "url": "https://ai.mikedemo.dev/skills/diagnose-device/SKILL.md",
+      "type": "skill-md",
+      "digest": "sha256:661c9f532a6316a7e83adc92417fdc6f576e35222c4e8419108c2a3c4ef0142a"
+    }
+  ]
+}

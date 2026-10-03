@@ -14,3 +14,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://ai.mikedemo.dev/sitemap.xml
+schemamap: https://ai.mikedemo.dev/schema-map.xml
