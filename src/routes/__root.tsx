@@ -104,7 +104,7 @@ export const Route = createRootRoute({
           "default-src 'self'; " +
           "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://js.hcaptcha.com https://umami-lite.view.fast; " +
           "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
-          "img-src 'self' data: blob: https://*.hcaptcha.com https://app.aikido.dev; " +
+          "img-src 'self' data: blob: https://*.hcaptcha.com https://app.aikido.dev https://brandmylaptop.com; " +
           "font-src 'self' data: https://cdn.jsdelivr.net; " +
           "connect-src 'self' https://cdn.jsdelivr.net https://huggingface.co https://*.hf.co https://hcaptcha.com https://*.hcaptcha.com https://umami-lite.view.fast; " +
           "frame-src https://*.hcaptcha.com; " +
